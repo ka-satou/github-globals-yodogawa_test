@@ -8,7 +8,7 @@ using YodogawaTest.DB;
 
 namespace YodogawaTest
 {
-	class BaseContext
+	public class BaseContext
 	{
 		/// <summary>
 		/// データステータス
