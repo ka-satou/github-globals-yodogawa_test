@@ -1,0 +1,7 @@
+*.exe
+*.cache
+*.dll
+*.log
+*.pdb
+/YodogawaTest/YodogawaTest/bin
+/YodogawaTest/YodogawaTest/obj
