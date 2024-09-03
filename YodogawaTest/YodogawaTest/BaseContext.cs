@@ -96,6 +96,7 @@ namespace YodogawaTest
 			{ 45, new CloumName{ StatusCloum = "Status31", ValueCloum = "Data31" }},
 			{ 46, new CloumName{ StatusCloum = "Status32", ValueCloum = "Data32" }},
 			{ 47, new CloumName{ StatusCloum = "Status33", ValueCloum = "Data33" }},
+			{ 49, new CloumName{ StatusCloum = "Status35", ValueCloum = "Data35" }},
 			{ 61, new CloumName{ StatusCloum = "Status37", ValueCloum = "Data37" }},
 			{ 62, new CloumName{ StatusCloum = "Status38", ValueCloum = "Data38" }},
 			{ 63, new CloumName{ StatusCloum = "Status39", ValueCloum = "Data39" }},
@@ -110,10 +111,21 @@ namespace YodogawaTest
 			{ 101, new CloumName{ StatusCloum = "Status76", ValueCloum = "Data75" }},
 		};
 
+
+		/// <summary>
+		/// 毛馬閘門カラム情報
+		/// </summary>
+		private static Dictionary<int,CloumName> KemaKoumonMap { get; } = new Dictionary<int, CloumName>
+		{
+			{ 41, new CloumName{ StatusCloum = "Status27", ValueCloum = "Data27" }},
+			{ 42, new CloumName{ StatusCloum = "Status28", ValueCloum = "Data28" }},
+			{ 43, new CloumName{ StatusCloum = "Status29", ValueCloum = "Data29" }},
+		};
+
 		/// <summary>
 		/// 毛馬水門カラム情報
 		/// </summary>
-		private static Dictionary<int,CloumName> KemaMap { get; } = new Dictionary<int, CloumName>
+		private static Dictionary<int,CloumName> KemaSuimonMap { get; } = new Dictionary<int, CloumName>
 		{
 			{ 11, new CloumName{ StatusCloum = "Status1", ValueCloum = "Data1" }},
 			{ 12, new CloumName{ StatusCloum = "Status2", ValueCloum = "Data2" }},
@@ -147,10 +159,95 @@ namespace YodogawaTest
 			{ 41, new CloumName{ StatusCloum = "Status27", ValueCloum = "Data27" }},
 			{ 42, new CloumName{ StatusCloum = "Status28", ValueCloum = "Data28" }},
 			{ 43, new CloumName{ StatusCloum = "Status29", ValueCloum = "Data29" }},
+			{ 44, new CloumName{ StatusCloum = "Status30", ValueCloum = "Data30" }},
+			{ 45, new CloumName{ StatusCloum = "Status31", ValueCloum = "Data31" }},
+			{ 46, new CloumName{ StatusCloum = "Status32", ValueCloum = "Data32" }},
+			{ 47, new CloumName{ StatusCloum = "Status33", ValueCloum = "Data33" }},
+			{ 48, new CloumName{ StatusCloum = "Status34", ValueCloum = "Data34" }},
+			{ 49, new CloumName{ StatusCloum = "Status35", ValueCloum = "Data35" }},
+			{ 50, new CloumName{ StatusCloum = "Status36", ValueCloum = "Data36" }},
 			{ 61, new CloumName{ StatusCloum = "Status37", ValueCloum = "Data37" }},
 			{ 62, new CloumName{ StatusCloum = "Status38", ValueCloum = "Data38" }},
 			{ 63, new CloumName{ StatusCloum = "Status39", ValueCloum = "Data39" }},
 			{ 64, new CloumName{ StatusCloum = "Status40", ValueCloum = "Data40" }},
+		};
+
+		private static Dictionary<int,CloumName> River1Map { get; } = new Dictionary<int, CloumName>
+		{
+			{ 41, new CloumName{ StatusCloum = "Status201", ValueCloum = "Data201" }},
+			{ 42, new CloumName{ StatusCloum = "Status202", ValueCloum = "Data202" }},
+			{ 43, new CloumName{ StatusCloum = "Status203", ValueCloum = "Data203" }},
+			{ 44, new CloumName{ StatusCloum = "Status204", ValueCloum = "Data204" }},
+			{ 45, new CloumName{ StatusCloum = "Status205", ValueCloum = "Data205" }},
+			{ 46, new CloumName{ StatusCloum = "Status206", ValueCloum = "Data206" }},
+			{ 47, new CloumName{ StatusCloum = "Status207", ValueCloum = "Data207" }},
+			{ 48, new CloumName{ StatusCloum = "Status208", ValueCloum = "Data208" }},
+			{ 49, new CloumName{ StatusCloum = "Status209", ValueCloum = "Data209" }},
+			{ 50, new CloumName{ StatusCloum = "Status210", ValueCloum = "Data210" }},
+			{ 51, new CloumName{ StatusCloum = "Status211", ValueCloum = "Data211" }},
+			{ 52, new CloumName{ StatusCloum = "Status212", ValueCloum = "Data212" }},
+			{ 53, new CloumName{ StatusCloum = "Status213", ValueCloum = "Data213" }},
+			{ 54, new CloumName{ StatusCloum = "Status214", ValueCloum = "Data214" }},
+			{ 58, new CloumName{ StatusCloum = "Status218", ValueCloum = "Data218" }},
+			{ 61, new CloumName{ StatusCloum = "Status219", ValueCloum = "Data219" }},
+			{ 62, new CloumName{ StatusCloum = "Status220", ValueCloum = "Data220" }},
+			{ 64, new CloumName{ StatusCloum = "Status222", ValueCloum = "Data222" }},
+			{ 65, new CloumName{ StatusCloum = "Status223", ValueCloum = "Data223" }},
+			{ 66, new CloumName{ StatusCloum = "Status224", ValueCloum = "Data224" }},
+			{ 69, new CloumName{ StatusCloum = "Status227", ValueCloum = "Data227" }},
+			{ 71, new CloumName{ StatusCloum = "Status229", ValueCloum = "Data229" }},
+		};
+
+		private static Dictionary<int,CloumName> River2Map { get; } = new Dictionary<int, CloumName>
+		{
+			{ 41, new CloumName{ StatusCloum = "Status201", ValueCloum = "Data201" }},
+			{ 42, new CloumName{ StatusCloum = "Status202", ValueCloum = "Data202" }},
+			{ 43, new CloumName{ StatusCloum = "Status203", ValueCloum = "Data203" }},
+			{ 46, new CloumName{ StatusCloum = "Status206", ValueCloum = "Data206" }},
+			{ 48, new CloumName{ StatusCloum = "Status208", ValueCloum = "Data208" }},
+			{ 49, new CloumName{ StatusCloum = "Status209", ValueCloum = "Data209" }},
+			{ 50, new CloumName{ StatusCloum = "Status210", ValueCloum = "Data210" }},
+		};
+
+		private static Dictionary<int,CloumName> River3Map { get; } = new Dictionary<int, CloumName>
+		{
+			{ 41, new CloumName{ StatusCloum = "Status201", ValueCloum = "Data201" }},
+			{ 42, new CloumName{ StatusCloum = "Status202", ValueCloum = "Data202" }},
+			{ 62, new CloumName{ StatusCloum = "Status220", ValueCloum = "Data220" }},
+			{ 63, new CloumName{ StatusCloum = "Status221", ValueCloum = "Data221" }},
+			{ 64, new CloumName{ StatusCloum = "Status222", ValueCloum = "Data222" }},
+			{ 65, new CloumName{ StatusCloum = "Status223", ValueCloum = "Data223" }},
+			{ 149, new CloumName{ StatusCloum = "Status236", ValueCloum = "Data236" }},
+			{ 165, new CloumName{ StatusCloum = "Status240", ValueCloum = "Data240" }},
+		};
+
+		private static Dictionary<int,CloumName> River4Map { get; } = new Dictionary<int, CloumName>
+		{
+			{ 61, new CloumName{ StatusCloum = "Status219", ValueCloum = "Data219" }},
+			{ 62, new CloumName{ StatusCloum = "Status220", ValueCloum = "Data220" }},
+			{ 63, new CloumName{ StatusCloum = "Status221", ValueCloum = "Data221" }},
+			{ 64, new CloumName{ StatusCloum = "Status222", ValueCloum = "Data222" }},
+			{ 65, new CloumName{ StatusCloum = "Status223", ValueCloum = "Data223" }},
+			{ 66, new CloumName{ StatusCloum = "Status224", ValueCloum = "Data224" }},
+			{ 67, new CloumName{ StatusCloum = "Status225", ValueCloum = "Data225" }},
+			{ 68, new CloumName{ StatusCloum = "Status226", ValueCloum = "Data226" }},
+			{ 69, new CloumName{ StatusCloum = "Status227", ValueCloum = "Data227" }},
+			{ 70, new CloumName{ StatusCloum = "Status228", ValueCloum = "Data228" }},
+			{ 71, new CloumName{ StatusCloum = "Status229", ValueCloum = "Data229" }},
+			{ 149, new CloumName{ StatusCloum = "Status236", ValueCloum = "Data236" }},
+			{ 150, new CloumName{ StatusCloum = "Status244", ValueCloum = "Data244" }},
+			{ 151, new CloumName{ StatusCloum = "Status252", ValueCloum = "Data252" }},
+			{ 152, new CloumName{ StatusCloum = "Status260", ValueCloum = "Data260" }},
+			{ 165, new CloumName{ StatusCloum = "Status240", ValueCloum = "Data240" }},
+			{ 166, new CloumName{ StatusCloum = "Status248", ValueCloum = "Data248" }},
+			{ 167, new CloumName{ StatusCloum = "Status256", ValueCloum = "Data256" }},
+			{ 168, new CloumName{ StatusCloum = "Status264", ValueCloum = "Data264" }},
+		};
+
+		private static Dictionary<int,CloumName> River5Map { get; } = new Dictionary<int, CloumName>
+		{
+			{ 41, new CloumName{ StatusCloum = "Status201", ValueCloum = "Data201" }},
+			{ 61, new CloumName{ StatusCloum = "Status219", ValueCloum = "Data219" }},
 		};
 
 		/// <summary>
@@ -159,8 +256,14 @@ namespace YodogawaTest
 		private static Dictionary<int, Dictionary<int,CloumName>> PropertyMap { get; } = new Dictionary<int, Dictionary<int, CloumName>>
 		{
 			{ 1, SekiMap },
-			{ 3, KemaMap },
+			{ 2, KemaKoumonMap },
+			{ 3, KemaSuimonMap },
 			{ 5, HitotuyaMap },
+			{ 8, River1Map },
+			{ 9, River2Map },
+			{ 10, River3Map },
+			{ 11, River4Map },
+			{ 12, River5Map },
 		};
 
 		/// <summary>
@@ -294,7 +397,7 @@ namespace YodogawaTest
 				data = data / 100;
 				result = data.ToString("0.00");
 			}
-			if (valueInfo.Point == 1)
+			else if (valueInfo.Point == 1)
 			{
 				double data = (double)value;
 				data = data / 10;

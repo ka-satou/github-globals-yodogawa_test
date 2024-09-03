@@ -14,18 +14,24 @@ namespace YodogawaTest
 {
 	public partial class TestConsolForm : Form
 	{
-
+		/// <summary>
+		/// 値ステータスリストボックスデータソース一式
+		/// </summary>
 		private DataTable valueStatusDS { get; set; } = new DataTable();
-		private static List<string> valueStatusStrList  { get; set; } = new List<string>
+		private static List<string> valueStatusStrList { get; set; } = new List<string>
 		{
 			"欠測", "正常", "点検", "異常", "データ異常", "無効"
 		};
-		private static List<DataStatus> valueStatusIdList  { get; set; } = new List<DataStatus>
+		private static List<DataStatus> valueStatusIdList { get; set; } = new List<DataStatus>
 		{
 			DataStatus.Missing, DataStatus.Normal, DataStatus.Inspection, DataStatus.Abnormal, DataStatus.DataAbnormal, DataStatus.Invalid
 		};
-		public DataTable valueChangeDS  { get; set; } = new DataTable();
-		private static List<string> valueChangeStrList  { get; set; } = new List<string>
+
+		/// <summary>
+		/// 値変化リストボックスデータソース一式
+		/// </summary>
+		public DataTable valueChangeDS { get; set; } = new DataTable();
+		private static List<string> valueChangeStrList { get; set; } = new List<string>
 		{
 			"上昇", "下降", "水平"
 		};
@@ -34,7 +40,9 @@ namespace YodogawaTest
 			DataChange.Rise, DataChange.Fall, DataChange.Horizon
 		};
 
-
+		/// <summary>
+		/// コンストラクタ
+		/// </summary>
 		public TestConsolForm()
 		{
 			InitializeComponent();
@@ -52,6 +60,18 @@ namespace YodogawaTest
 			gateValueStatus.DataSource = valueStatusDS;
 			gateValueStatus.DisplayMember = "name";
 			gateValueStatus.ValueMember = "id";
+			sekiValueStatus.DataSource = valueStatusDS;
+			sekiValueStatus.DisplayMember = "name";
+			sekiValueStatus.ValueMember = "id";
+			riverValueStatus.DataSource = valueStatusDS;
+			riverValueStatus.DisplayMember = "name";
+			riverValueStatus.ValueMember = "id";
+			damValueStatus.DataSource = valueStatusDS;
+			damValueStatus.DisplayMember = "name";
+			damValueStatus.ValueMember = "id";
+			rainValueStatus.DataSource = valueStatusDS;
+			rainValueStatus.DisplayMember = "name";
+			rainValueStatus.ValueMember = "id";
 
 			// ValueChange
 			valueChangeDS.Columns.Add("name", typeof(string));
@@ -66,19 +86,45 @@ namespace YodogawaTest
 			gateValueChange.DataSource = valueChangeDS;
 			gateValueChange.DisplayMember = "name";
 			gateValueChange.ValueMember = "id";
+			sekiValueChange.DataSource = valueChangeDS;
+			sekiValueChange.DisplayMember = "name";
+			sekiValueChange.ValueMember = "id";
+			riverValueChange.DataSource = valueChangeDS;
+			riverValueChange.DisplayMember = "name";
+			riverValueChange.ValueMember = "id";
+			damValueChange.DataSource = valueChangeDS;
+			damValueChange.DisplayMember = "name";
+			damValueChange.ValueMember = "id";
+			rainValueChange.DataSource = valueChangeDS;
+			rainValueChange.DisplayMember = "name";
+			rainValueChange.ValueMember = "id";
 		}
 
+		/// <summary>
+		/// 初期画面表示
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void TestConsolForm_Load(object sender, EventArgs e)
 		{
 			ShowGridView();
 		}
 
+		/// <summary>
+		/// タブコントールチェンジ
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void tabControl_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			int indx = tabControl.SelectedIndex;
 			ShowGridView(indx);
 		}
 
+		/// <summary>
+		/// 一覧表表示
+		/// </summary>
+		/// <param name="indx"></param>
 		private void ShowGridView(int indx = 0)
 		{
 			switch(indx)
@@ -101,6 +147,9 @@ namespace YodogawaTest
 			}
 		}
 
+		/// <summary>
+		/// ゲート一覧表示
+		/// </summary>
 		private void ShowGateGridView()
 		{
 			GateContext context = new GateContext();
@@ -112,48 +161,60 @@ namespace YodogawaTest
 			}
 		}
 
+		/// <summary>
+		/// 大堰周辺一覧表示
+		/// </summary>
 		private void ShowSekiGridView()
 		{
-
-
-
-
-
-
+			SekiContext context = new SekiContext();
+			List<KansokuData> kansokus = context.CreateKansokuDataList();
+			sekiDataGridView.Rows.Clear();
+			foreach(KansokuData kansoku in kansokus)
+			{
+				sekiDataGridView.Rows.Add(kansoku.PointName,kansoku.ValueStatus,kansoku.ValueView,kansoku.ValueUpdate,kansoku.ValueChange);
+			}
 		}
 
-
+		/// <summary>
+		/// 河川一覧表示
+		/// </summary>
 		private void ShowRiverGridView()
 		{
-
-
-
-
-
-
+			RiverContext context = new RiverContext();
+			List<KansokuData> kansokus = context.CreateKansokuDataList();
+			riverDataGridView.Rows.Clear();
+			foreach(KansokuData kansoku in kansokus)
+			{
+				riverDataGridView.Rows.Add(kansoku.PointName,kansoku.ValueStatus,kansoku.ValueView,kansoku.ValueUpdate,kansoku.ValueChange);
+			}
 		}
 
-
+		/// <summary>
+		/// ダム一覧表示
+		/// </summary>
 		private void ShowDamGridView()
 		{
-
-
-
-
-
-
+			DamContext context = new DamContext();
+			List<KansokuData> kansokus = context.CreateKansokuDataList();
+			damDataGridView.Rows.Clear();
+			foreach(KansokuData kansoku in kansokus)
+			{
+				damDataGridView.Rows.Add(kansoku.PointName,kansoku.ValueStatus,kansoku.ValueView,kansoku.ValueUpdate,kansoku.ValueChange);
+			}
 		}
 
+		/// <summary>
+		/// 雨量一覧表示
+		/// </summary>
 		private void ShowRainGridView()
 		{
-
-
-
-
-
-
+			RainContext context = new RainContext();
+			List<KansokuData> kansokus = context.CreateKansokuDataList();
+			rainDataGridView.Rows.Clear();
+			foreach(KansokuData kansoku in kansokus)
+			{
+				rainDataGridView.Rows.Add(kansoku.PointName,kansoku.ValueStatus,kansoku.ValueView,kansoku.ValueUpdate,kansoku.ValueChange);
+			}
 		}
-
-
 	}
 }

@@ -39,19 +39,5 @@ namespace YodogawaTest
 			List<KansokuData> kansokus = CreateKansokuDataList(valueInfos);
 			return kansokus;
 		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	}
 }
