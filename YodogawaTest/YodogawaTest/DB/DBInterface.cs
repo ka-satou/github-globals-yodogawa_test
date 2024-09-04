@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -53,7 +55,55 @@ namespace YodogawaTest.DB
 			}
 		}
 
+		/// <summary>
+		/// 施設番号条件で更新
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="station"></param>
+		/// <param name="updateData"></param>
+		public void UpdateAll<T>(int station, T updateData) where T : class, IStationNoEntity
+		{
+			try
+			{
+				using (DBConnection connection = GetConnection())
+				{
+					var entities = DatabaseManager.Instance.GetEntities<T>(connection)
+					.Where(v => v.StationNo == station)
+					.FirstOrDefault();
+					CopyProperyt<T>(entities, updateData);
+					connection.SaveChanges();
+				}
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine(ex);
+			}
+		}
 
+		/// <summary>
+		/// src→targetでプロパティ全体をコピーする
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="target"></param>
+		/// <param name="src"></param>
+		public static void CopyProperyt<T>(T target, T src)
+		{
+			// 親クラスのプロパティ情報を一気に取得して使用する。
+			List<PropertyInfo> props = src
+				.GetType()
+				.GetProperties(BindingFlags.Instance | BindingFlags.Public)?
+				.ToList();
+
+			props.ForEach(prop =>
+			{
+				var propValue = prop.GetValue(src);
+				typeof(T).GetProperty(prop.Name).SetValue(target, propValue);
+			});
+		}
+
+		/// <summary>
+		/// DBインターフェースインスタンス
+		/// </summary>
 		private static DBInterface _instance;
 		private static DBInterface Instance => _instance ?? (_instance = new DBInterface());
 
@@ -74,5 +124,19 @@ namespace YodogawaTest.DB
 		/// </summary>
 		/// <returns></returns>
 		public static List<KeisokuDataInfoEntity> FindKeisokuDataInfoAll() => Instance.SelectAll<KeisokuDataInfoEntity>();
+
+		/// <summary>
+		/// 瞬時値データの更新
+		/// </summary>
+		/// <param name="station"></param>
+		/// <param name="entity"></param>
+		public static void UpdateRecentDataListBy(int station, RecentDataEntity entity) => Instance.UpdateAll<RecentDataEntity>(station, entity);
+
+		/// <summary>
+		/// 河川情報瞬時値データの更新
+		/// </summary>
+		/// <param name="station"></param>
+		/// <param name="entity"></param>
+		public static void UpdateRecentRiverDataListBy(int station, RecentRiverDataEntity entity) => Instance.UpdateAll<RecentRiverDataEntity>(station, entity);
 	}
 }

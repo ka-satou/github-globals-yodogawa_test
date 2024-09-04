@@ -32,39 +32,41 @@ namespace YodogawaTest
 			this.tabControl = new System.Windows.Forms.TabControl();
 			this.gatePage = new System.Windows.Forms.TabPage();
 			this.gateDataGridView = new System.Windows.Forms.DataGridView();
-			this.sekiPage = new System.Windows.Forms.TabPage();
-			this.sekiDataGridView = new System.Windows.Forms.DataGridView();
-			this.riverPage = new System.Windows.Forms.TabPage();
-			this.riverDataGridView = new System.Windows.Forms.DataGridView();
-			this.damPage = new System.Windows.Forms.TabPage();
-			this.damDataGridView = new System.Windows.Forms.DataGridView();
-			this.rainPage = new System.Windows.Forms.TabPage();
-			this.rainDataGridView = new System.Windows.Forms.DataGridView();
-			this.sekiPointName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.sekiValueStatus = new System.Windows.Forms.DataGridViewComboBoxColumn();
-			this.sekiValueView = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.sekiValueUpdate = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.sekiValueChange = new System.Windows.Forms.DataGridViewComboBoxColumn();
-			this.riverPointName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.riverValueStatus = new System.Windows.Forms.DataGridViewComboBoxColumn();
-			this.riverValueView = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.riverValueUpdate = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.riverValueChange = new System.Windows.Forms.DataGridViewComboBoxColumn();
-			this.damPointName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.damValueStatus = new System.Windows.Forms.DataGridViewComboBoxColumn();
-			this.damValueView = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.damValueUpdate = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.damValueChange = new System.Windows.Forms.DataGridViewComboBoxColumn();
-			this.rainPointName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.rainValueStatus = new System.Windows.Forms.DataGridViewComboBoxColumn();
-			this.rainValueView = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.rainValueUpdate = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.rainValueChange = new System.Windows.Forms.DataGridViewComboBoxColumn();
 			this.gatePointName = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.gateValueStatus = new System.Windows.Forms.DataGridViewComboBoxColumn();
 			this.gateValueView = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.gateValueUpdate = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.gateValueChange = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.sekiPage = new System.Windows.Forms.TabPage();
+			this.sekiDataGridView = new System.Windows.Forms.DataGridView();
+			this.riverPage = new System.Windows.Forms.TabPage();
+			this.riverDataGridView = new System.Windows.Forms.DataGridView();
+			this.riverPointName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.riverValueStatus = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.riverValueView = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.riverValueUpdate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.riverValueChange = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.damPage = new System.Windows.Forms.TabPage();
+			this.damDataGridView = new System.Windows.Forms.DataGridView();
+			this.damPointName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.damValueStatus = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.damValueView = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.damValueUpdate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.damValueChange = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.rainPage = new System.Windows.Forms.TabPage();
+			this.rainDataGridView = new System.Windows.Forms.DataGridView();
+			this.rainPointName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.rainValueStatus = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.rainValueView = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.rainValueUpdate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.rainValueChange = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.refreshButton = new System.Windows.Forms.CheckBox();
+			this.updateButton = new System.Windows.Forms.Button();
+			this.sekiPointName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.sekiValueStatus = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.sekiValueView = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.sekiValueUpdate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.sekiValueChange = new System.Windows.Forms.DataGridViewComboBoxColumn();
 			this.tabControl.SuspendLayout();
 			this.gatePage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gateDataGridView)).BeginInit();
@@ -118,6 +120,34 @@ namespace YodogawaTest
 			this.gateDataGridView.RowTemplate.Height = 21;
 			this.gateDataGridView.Size = new System.Drawing.Size(800, 500);
 			this.gateDataGridView.TabIndex = 0;
+			// 
+			// gatePointName
+			// 
+			this.gatePointName.HeaderText = "観測地点";
+			this.gatePointName.Name = "gatePointName";
+			this.gatePointName.Width = 180;
+			// 
+			// gateValueStatus
+			// 
+			this.gateValueStatus.HeaderText = "観測データ状態";
+			this.gateValueStatus.Name = "gateValueStatus";
+			// 
+			// gateValueView
+			// 
+			this.gateValueView.HeaderText = "観測データ表示";
+			this.gateValueView.Name = "gateValueView";
+			this.gateValueView.Width = 120;
+			// 
+			// gateValueUpdate
+			// 
+			this.gateValueUpdate.HeaderText = "観測データ編集";
+			this.gateValueUpdate.Name = "gateValueUpdate";
+			this.gateValueUpdate.Width = 120;
+			// 
+			// gateValueChange
+			// 
+			this.gateValueChange.HeaderText = "観測データ変化";
+			this.gateValueChange.Name = "gateValueChange";
 			// 
 			// sekiPage
 			// 
@@ -175,90 +205,6 @@ namespace YodogawaTest
 			this.riverDataGridView.Size = new System.Drawing.Size(786, 503);
 			this.riverDataGridView.TabIndex = 1;
 			// 
-			// damPage
-			// 
-			this.damPage.Controls.Add(this.damDataGridView);
-			this.damPage.Location = new System.Drawing.Point(4, 22);
-			this.damPage.Name = "damPage";
-			this.damPage.Padding = new System.Windows.Forms.Padding(3);
-			this.damPage.Size = new System.Drawing.Size(782, 503);
-			this.damPage.TabIndex = 2;
-			this.damPage.Text = "ダム";
-			this.damPage.UseVisualStyleBackColor = true;
-			// 
-			// damDataGridView
-			// 
-			this.damDataGridView.AllowUserToAddRows = false;
-			this.damDataGridView.AllowUserToDeleteRows = false;
-			this.damDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.damDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.damPointName,
-            this.damValueStatus,
-            this.damValueView,
-            this.damValueUpdate,
-            this.damValueChange});
-			this.damDataGridView.Location = new System.Drawing.Point(-2, 0);
-			this.damDataGridView.Name = "damDataGridView";
-			this.damDataGridView.RowTemplate.Height = 21;
-			this.damDataGridView.Size = new System.Drawing.Size(786, 500);
-			this.damDataGridView.TabIndex = 1;
-			// 
-			// rainPage
-			// 
-			this.rainPage.Controls.Add(this.rainDataGridView);
-			this.rainPage.Location = new System.Drawing.Point(4, 22);
-			this.rainPage.Name = "rainPage";
-			this.rainPage.Padding = new System.Windows.Forms.Padding(3);
-			this.rainPage.Size = new System.Drawing.Size(782, 503);
-			this.rainPage.TabIndex = 3;
-			this.rainPage.Text = "雨量";
-			this.rainPage.UseVisualStyleBackColor = true;
-			// 
-			// rainDataGridView
-			// 
-			this.rainDataGridView.AllowUserToAddRows = false;
-			this.rainDataGridView.AllowUserToDeleteRows = false;
-			this.rainDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.rainDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.rainPointName,
-            this.rainValueStatus,
-            this.rainValueView,
-            this.rainValueUpdate,
-            this.rainValueChange});
-			this.rainDataGridView.Location = new System.Drawing.Point(-2, 0);
-			this.rainDataGridView.Name = "rainDataGridView";
-			this.rainDataGridView.RowTemplate.Height = 21;
-			this.rainDataGridView.Size = new System.Drawing.Size(786, 500);
-			this.rainDataGridView.TabIndex = 1;
-			// 
-			// sekiPointName
-			// 
-			this.sekiPointName.HeaderText = "観測地点";
-			this.sekiPointName.Name = "sekiPointName";
-			this.sekiPointName.Width = 150;
-			// 
-			// sekiValueStatus
-			// 
-			this.sekiValueStatus.HeaderText = "観測データ状態";
-			this.sekiValueStatus.Name = "sekiValueStatus";
-			// 
-			// sekiValueView
-			// 
-			this.sekiValueView.HeaderText = "観測データ表示";
-			this.sekiValueView.Name = "sekiValueView";
-			this.sekiValueView.Width = 120;
-			// 
-			// sekiValueUpdate
-			// 
-			this.sekiValueUpdate.HeaderText = "観測データ編集";
-			this.sekiValueUpdate.Name = "sekiValueUpdate";
-			this.sekiValueUpdate.Width = 120;
-			// 
-			// sekiValueChange
-			// 
-			this.sekiValueChange.HeaderText = "観測データ変化";
-			this.sekiValueChange.Name = "sekiValueChange";
-			// 
 			// riverPointName
 			// 
 			this.riverPointName.HeaderText = "観測地点";
@@ -286,6 +232,34 @@ namespace YodogawaTest
 			// 
 			this.riverValueChange.HeaderText = "観測データ変化";
 			this.riverValueChange.Name = "riverValueChange";
+			// 
+			// damPage
+			// 
+			this.damPage.Controls.Add(this.damDataGridView);
+			this.damPage.Location = new System.Drawing.Point(4, 22);
+			this.damPage.Name = "damPage";
+			this.damPage.Padding = new System.Windows.Forms.Padding(3);
+			this.damPage.Size = new System.Drawing.Size(782, 503);
+			this.damPage.TabIndex = 2;
+			this.damPage.Text = "ダム";
+			this.damPage.UseVisualStyleBackColor = true;
+			// 
+			// damDataGridView
+			// 
+			this.damDataGridView.AllowUserToAddRows = false;
+			this.damDataGridView.AllowUserToDeleteRows = false;
+			this.damDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.damDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.damPointName,
+            this.damValueStatus,
+            this.damValueView,
+            this.damValueUpdate,
+            this.damValueChange});
+			this.damDataGridView.Location = new System.Drawing.Point(-2, 0);
+			this.damDataGridView.Name = "damDataGridView";
+			this.damDataGridView.RowTemplate.Height = 21;
+			this.damDataGridView.Size = new System.Drawing.Size(786, 500);
+			this.damDataGridView.TabIndex = 1;
 			// 
 			// damPointName
 			// 
@@ -315,6 +289,34 @@ namespace YodogawaTest
 			this.damValueChange.HeaderText = "観測データ変化";
 			this.damValueChange.Name = "damValueChange";
 			// 
+			// rainPage
+			// 
+			this.rainPage.Controls.Add(this.rainDataGridView);
+			this.rainPage.Location = new System.Drawing.Point(4, 22);
+			this.rainPage.Name = "rainPage";
+			this.rainPage.Padding = new System.Windows.Forms.Padding(3);
+			this.rainPage.Size = new System.Drawing.Size(782, 503);
+			this.rainPage.TabIndex = 3;
+			this.rainPage.Text = "雨量";
+			this.rainPage.UseVisualStyleBackColor = true;
+			// 
+			// rainDataGridView
+			// 
+			this.rainDataGridView.AllowUserToAddRows = false;
+			this.rainDataGridView.AllowUserToDeleteRows = false;
+			this.rainDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.rainDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.rainPointName,
+            this.rainValueStatus,
+            this.rainValueView,
+            this.rainValueUpdate,
+            this.rainValueChange});
+			this.rainDataGridView.Location = new System.Drawing.Point(-2, 0);
+			this.rainDataGridView.Name = "rainDataGridView";
+			this.rainDataGridView.RowTemplate.Height = 21;
+			this.rainDataGridView.Size = new System.Drawing.Size(786, 500);
+			this.rainDataGridView.TabIndex = 1;
+			// 
 			// rainPointName
 			// 
 			this.rainPointName.HeaderText = "観測地点";
@@ -343,39 +345,63 @@ namespace YodogawaTest
 			this.rainValueChange.HeaderText = "観測データ変化";
 			this.rainValueChange.Name = "rainValueChange";
 			// 
-			// gatePointName
+			// refreshButton
 			// 
-			this.gatePointName.HeaderText = "観測地点";
-			this.gatePointName.Name = "gatePointName";
-			this.gatePointName.Width = 180;
+			this.refreshButton.Appearance = System.Windows.Forms.Appearance.Button;
+			this.refreshButton.Location = new System.Drawing.Point(16, 552);
+			this.refreshButton.Name = "refreshButton";
+			this.refreshButton.Size = new System.Drawing.Size(104, 34);
+			this.refreshButton.TabIndex = 2;
+			this.refreshButton.Text = "最新データ表示";
+			this.refreshButton.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.refreshButton.UseVisualStyleBackColor = true;
+			this.refreshButton.CheckedChanged += new System.EventHandler(this.refreshButton_CheckedChanged);
 			// 
-			// gateValueStatus
+			// updateButton
 			// 
-			this.gateValueStatus.HeaderText = "観測データ状態";
-			this.gateValueStatus.Name = "gateValueStatus";
+			this.updateButton.Location = new System.Drawing.Point(700, 547);
+			this.updateButton.Name = "updateButton";
+			this.updateButton.Size = new System.Drawing.Size(98, 33);
+			this.updateButton.TabIndex = 3;
+			this.updateButton.Text = "データ更新";
+			this.updateButton.UseVisualStyleBackColor = true;
+			this.updateButton.Click += new System.EventHandler(this.updateButton_Click);
 			// 
-			// gateValueView
+			// sekiPointName
 			// 
-			this.gateValueView.HeaderText = "観測データ表示";
-			this.gateValueView.Name = "gateValueView";
-			this.gateValueView.Width = 120;
+			this.sekiPointName.HeaderText = "観測地点";
+			this.sekiPointName.Name = "sekiPointName";
+			this.sekiPointName.Width = 180;
 			// 
-			// gateValueUpdate
+			// sekiValueStatus
 			// 
-			this.gateValueUpdate.HeaderText = "観測データ編集";
-			this.gateValueUpdate.Name = "gateValueUpdate";
-			this.gateValueUpdate.Width = 120;
+			this.sekiValueStatus.HeaderText = "観測データ状態";
+			this.sekiValueStatus.Name = "sekiValueStatus";
 			// 
-			// gateValueChange
+			// sekiValueView
 			// 
-			this.gateValueChange.HeaderText = "観測データ変化";
-			this.gateValueChange.Name = "gateValueChange";
+			this.sekiValueView.HeaderText = "観測データ表示";
+			this.sekiValueView.Name = "sekiValueView";
+			this.sekiValueView.Width = 120;
+			// 
+			// sekiValueUpdate
+			// 
+			this.sekiValueUpdate.HeaderText = "観測データ編集";
+			this.sekiValueUpdate.Name = "sekiValueUpdate";
+			this.sekiValueUpdate.Width = 120;
+			// 
+			// sekiValueChange
+			// 
+			this.sekiValueChange.HeaderText = "観測データ変化";
+			this.sekiValueChange.Name = "sekiValueChange";
 			// 
 			// TestConsolForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(810, 561);
+			this.ClientSize = new System.Drawing.Size(810, 598);
+			this.Controls.Add(this.updateButton);
+			this.Controls.Add(this.refreshButton);
 			this.Controls.Add(this.tabControl);
 			this.Name = "TestConsolForm";
 			this.Text = "淀川大堰テスト";
@@ -407,11 +433,6 @@ namespace YodogawaTest
 		private System.Windows.Forms.DataGridView riverDataGridView;
 		private System.Windows.Forms.DataGridView damDataGridView;
 		private System.Windows.Forms.DataGridView rainDataGridView;
-		private System.Windows.Forms.DataGridViewTextBoxColumn sekiPointName;
-		private System.Windows.Forms.DataGridViewComboBoxColumn sekiValueStatus;
-		private System.Windows.Forms.DataGridViewTextBoxColumn sekiValueView;
-		private System.Windows.Forms.DataGridViewTextBoxColumn sekiValueUpdate;
-		private System.Windows.Forms.DataGridViewComboBoxColumn sekiValueChange;
 		private System.Windows.Forms.DataGridViewTextBoxColumn riverPointName;
 		private System.Windows.Forms.DataGridViewComboBoxColumn riverValueStatus;
 		private System.Windows.Forms.DataGridViewTextBoxColumn riverValueView;
@@ -432,6 +453,13 @@ namespace YodogawaTest
 		private System.Windows.Forms.DataGridViewTextBoxColumn gateValueView;
 		private System.Windows.Forms.DataGridViewTextBoxColumn gateValueUpdate;
 		private System.Windows.Forms.DataGridViewComboBoxColumn gateValueChange;
+		private System.Windows.Forms.CheckBox refreshButton;
+		private System.Windows.Forms.Button updateButton;
+		private System.Windows.Forms.DataGridViewTextBoxColumn sekiPointName;
+		private System.Windows.Forms.DataGridViewComboBoxColumn sekiValueStatus;
+		private System.Windows.Forms.DataGridViewTextBoxColumn sekiValueView;
+		private System.Windows.Forms.DataGridViewTextBoxColumn sekiValueUpdate;
+		private System.Windows.Forms.DataGridViewComboBoxColumn sekiValueChange;
 	}
 }
 

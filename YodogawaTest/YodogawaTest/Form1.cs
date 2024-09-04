@@ -216,5 +216,33 @@ namespace YodogawaTest
 				rainDataGridView.Rows.Add(kansoku.PointName,kansoku.ValueStatus,kansoku.ValueView,kansoku.ValueUpdate,kansoku.ValueChange);
 			}
 		}
+
+		/// <summary>
+		/// データリフレシュ開始/停止
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void refreshButton_CheckedChanged(object sender, EventArgs e)
+		{
+			CheckBox chkBox = (CheckBox)sender; 
+			if(chkBox.Checked == true)
+			{
+				// データリフレシュタイマー開始
+			}
+			else
+			{
+				// データリフレシュタイマー停止
+			}
+		}
+
+		/// <summary>
+		/// データ更新
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void updateButton_Click(object sender, EventArgs e)
+		{
+			UpdateChangeData();
+		}
 	}
 }

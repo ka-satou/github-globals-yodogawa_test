@@ -46,6 +46,17 @@ namespace YodogawaTest
 		}
 
 		/// <summary>
+		/// 更新データ
+		/// </summary>
+		public class UpdateData
+		{
+			public DataStatus ValueStatus { get; set; }
+			public string ValueView { get; set; }
+			public string ValueUpdate { get; set; }
+			public DataChange ValueChange { get; set; }
+		}
+
+		/// <summary>
 		/// 値情報
 		/// </summary>
 		public class ValueInfo
@@ -73,6 +84,17 @@ namespace YodogawaTest
 			public string ValueCloum { get; set; }
 		}
 
+		/// <summary>
+		/// データ変化管理クラス
+		/// </summary>
+		public class DataChangeMng
+		{
+			public int StationNo { get; set; }
+			public int EquipNo { get ; set; }
+			public DataChange ValueChange { get; set; }
+			public int CurValue { get ; set; }
+			public int ChangeValue { get ; set; }
+		}
 
 		/// <summary>
 		/// 淀川大堰カラム情報
@@ -253,7 +275,7 @@ namespace YodogawaTest
 		/// <summary>
 		/// カラム情報マップ
 		/// </summary>
-		private static Dictionary<int, Dictionary<int,CloumName>> PropertyMap { get; } = new Dictionary<int, Dictionary<int, CloumName>>
+		public static Dictionary<int, Dictionary<int,CloumName>> PropertyMap { get; } = new Dictionary<int, Dictionary<int, CloumName>>
 		{
 			{ 1, SekiMap },
 			{ 2, KemaKoumonMap },
@@ -264,6 +286,30 @@ namespace YodogawaTest
 			{ 10, River3Map },
 			{ 11, River4Map },
 			{ 12, River5Map },
+		};
+
+		private static Dictionary<int, DataChangeMng> SekiChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
+		public static Dictionary<int, DataChangeMng> KemaKoumonChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
+		private static Dictionary<int, DataChangeMng> KemaSuimonChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
+		private static Dictionary<int, DataChangeMng> HitotuyaChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
+		private static Dictionary<int, DataChangeMng> River1ChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
+		private static Dictionary<int, DataChangeMng> River2ChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
+		private static Dictionary<int, DataChangeMng> River3ChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
+		private static Dictionary<int, DataChangeMng> River4ChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
+		private static Dictionary<int, DataChangeMng> River5ChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
+
+
+		public static Dictionary<int, Dictionary<int, DataChangeMng>> ChangeDataMap { get; } = new Dictionary<int, Dictionary<int, DataChangeMng>>
+		{
+			{ 1, SekiChangeData },
+			{ 2, KemaKoumonChangeData },
+			{ 3, KemaSuimonChangeData },
+			{ 5, HitotuyaChangeData },
+			{ 8, River1ChangeData },
+			{ 9, River2ChangeData },
+			{ 10, River3ChangeData },
+			{ 11, River4ChangeData },
+			{ 12, River5ChangeData },
 		};
 
 		/// <summary>
@@ -319,7 +365,7 @@ namespace YodogawaTest
 			foreach(ValueInfo valueInfo in valueInfos)
 			{
 				KansokuData kansokuData = new KansokuData();
-				kansokuData.ValueChange = DataChange.Horizon;
+//				kansokuData.ValueChange = DataChange.Horizon;
 				KeisokuDataInfoEntity keisokuInfo
 					= keisokuList.Where(k => k.StationNo == valueInfo.StationNo && k.EquipNo == valueInfo.EquipNo).FirstOrDefault();
 				kansokuData.PointName = keisokuInfo.Name;
@@ -333,6 +379,7 @@ namespace YodogawaTest
 						kansokuData.ValueStatus = result.Status;
 						kansokuData.ValueView = result.Value;
 						kansokuData.ValueUpdate = result.Value;
+						kansokuData.ValueChange = SetChangeDataMng<RecentDataEntity>(valueInfo, selRecents[0]);
 					}
 				}
 				else
@@ -344,6 +391,7 @@ namespace YodogawaTest
 						kansokuData.ValueStatus = result.Status;
 						kansokuData.ValueView = result.Value;
 						kansokuData.ValueUpdate = result.Value;
+						kansokuData.ValueChange = SetChangeDataMng<RecentRiverDataEntity>(valueInfo, selRecentRivers[0]);
 					}
 				}
 				kansokuDatas.Add(kansokuData);
@@ -408,6 +456,172 @@ namespace YodogawaTest
 				result = value.ToString("0");
 			}
 			return result;
+		}
+
+		/// <summary>
+		/// プロパティへの値の設定
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="data"></param>
+		/// <param name="columnName"></param>
+		/// <param name="value"></param>
+		public static void SetPropertyValue<T>(T data, string columnName, object value)
+		{
+			// プロパティ情報の取得
+			if (typeof(T).GetProperty(columnName) is PropertyInfo propertyInfo)
+			{
+				// インスタンスの値を取得
+				propertyInfo.SetValue(data, value);
+			}
+		}
+
+		/// <summary>
+		/// データ変化管理設定
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="valueInfo"></param>
+		/// <param name="dataEntity"></param>
+		/// <returns></returns>
+		public DataChange SetChangeDataMng<T>(ValueInfo valueInfo, T dataEntity)
+		{
+			DataStatus Status = DataStatus.Invalid;
+			DataChange result = DataChange.Horizon;
+			DataChangeMng changeMng = null;
+
+			Dictionary<int,CloumName> propMap = PropertyMap[valueInfo.StationNo];
+			CloumName cloum = propMap[valueInfo.EquipNo];
+
+			if(typeof(T).GetProperty(cloum.StatusCloum) is PropertyInfo propertyInfoStatus)
+			{
+				int status = (int)propertyInfoStatus.GetValue(dataEntity);
+				Status = (DataStatus)status;
+			}
+			if(Status == DataStatus.Normal)
+			{
+				if(typeof(T).GetProperty(cloum.ValueCloum) is PropertyInfo propertyInfoValue)
+				{
+					int value = (int)propertyInfoValue.GetValue(dataEntity);
+					Dictionary<int, DataChangeMng> changeData = ChangeDataMap[valueInfo.StationNo];
+					if(changeData.ContainsKey(valueInfo.EquipNo))
+					{
+						changeMng = changeData[valueInfo.EquipNo];
+						changeMng.CurValue = value;
+						result = changeMng.ValueChange;
+						changeData[valueInfo.EquipNo] = changeMng;
+					}
+					else
+					{
+						changeMng = new DataChangeMng();
+						changeMng.StationNo = valueInfo.StationNo;
+						changeMng.EquipNo = valueInfo.EquipNo;
+						changeMng.ValueChange = DataChange.Horizon;
+						changeMng.CurValue = value;
+						changeMng.ChangeValue = ((value / 100) > 0)? (value / 100) : 1;
+						changeData[valueInfo.EquipNo] = changeMng;
+					}
+				}
+			}
+			return result;
+		}
+
+		/// <summary>
+		/// データ変化更新
+		/// </summary>
+		public static void UpdateChangeData()
+		{
+			List<int> recentList = new List<int>(){1,2,3,4,5};
+			List<int> recentRiverList = new List<int>(){8,9,10,11,12};
+
+			List<RecentDataEntity> recents = null;
+			List<RecentRiverDataEntity> recentRivers = null;
+			RecentDataEntity selRecent = null;
+			RecentRiverDataEntity selRecentRiver = null;
+
+			recents = DBInterface.FindRecentDataListBy(recentList);
+			recentRivers = DBInterface.FindRecentRiverDataListBy(recentRiverList);
+
+			foreach (KeyValuePair<int, Dictionary<int, DataChangeMng>> kvp0 in ChangeDataMap)
+			{
+				int station = kvp0.Key;
+				Dictionary<int, DataChangeMng> dataChangeMap = kvp0.Value;
+				if(dataChangeMap.Count > 0)
+				{
+					if(station <= 7)
+					{
+						selRecent = recents.Where(x => x.StationNo == station).FirstOrDefault();
+					}
+					else
+					{
+						selRecentRiver = recentRivers.Where(x => x.StationNo == station).FirstOrDefault();
+					}
+					foreach (KeyValuePair<int, DataChangeMng> kvp1 in dataChangeMap)
+					{
+						int equip = kvp1.Key;
+						DataChangeMng dataChange = kvp1.Value;
+						Dictionary<int,CloumName> propMap = PropertyMap[station];
+						CloumName cloum = propMap[equip];
+						DataStatus valueStatus = DataStatus.Invalid;
+						if(station <= 7)
+						{
+							if(typeof(RecentDataEntity).GetProperty(cloum.StatusCloum) is PropertyInfo propertyInfoStatus)
+							{
+								int status = (int)propertyInfoStatus.GetValue(selRecent);
+								valueStatus = (DataStatus)status;
+							}
+						}
+						else
+						{
+							if(typeof(RecentRiverDataEntity).GetProperty(cloum.StatusCloum) is PropertyInfo propertyInfoStatus)
+							{
+								int status = (int)propertyInfoStatus.GetValue(selRecentRiver);
+								valueStatus = (DataStatus)status;
+							}
+						}
+						if(valueStatus == DataStatus.Normal)
+						{
+							int changeValue = 0;
+							if (dataChange.ValueChange == DataChange.Rise)
+							{
+								changeValue = dataChange.CurValue + dataChange.ChangeValue;
+								 dataChange.CurValue = changeValue;
+							}
+							else if(dataChange.ValueChange == DataChange.Fall)
+							{
+								if(dataChange.CurValue >= dataChange.ChangeValue)
+								{
+									changeValue = dataChange.CurValue - dataChange.ChangeValue;
+									dataChange.CurValue = changeValue;
+								}
+								else if(dataChange.CurValue >= 1)
+								{
+									dataChange.ChangeValue = 1;
+									changeValue = dataChange.CurValue - dataChange.ChangeValue;
+									dataChange.CurValue = changeValue;
+								}
+							}
+							if((dataChange.ValueChange == DataChange.Rise) || (dataChange.ValueChange == DataChange.Fall))
+							{
+								if(station <= 7)
+								{
+									SetPropertyValue<RecentDataEntity>(selRecent, cloum.ValueCloum, changeValue);
+								}
+								else
+								{
+									SetPropertyValue<RecentRiverDataEntity>(selRecentRiver, cloum.ValueCloum, changeValue);
+								}
+							}
+						}
+					}
+					if(station <= 7)
+					{
+						DBInterface.UpdateRecentDataListBy(station, selRecent);
+					}
+					else
+					{
+						DBInterface.UpdateRecentRiverDataListBy(station, selRecentRiver);
+					}
+				}
+			}
 		}
 	}
 }
