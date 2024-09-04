@@ -623,5 +623,29 @@ namespace YodogawaTest
 				}
 			}
 		}
+
+		/// <summary>
+		/// 計測データリスト更新
+		/// </summary>
+		/// <param name="valueInfos"></param>
+		/// <param name="updates"></param>
+		public void UpdateKansokuDataList(List<ValueInfo> valueInfos, List<UpdateData> updates)
+		{
+			foreach (var item in valueInfos.Zip(updates, (valueInfo, update) => new { valueInfo, update }))
+			{
+				ValueInfo valueInfo = item.valueInfo;
+				UpdateData update = item.update;
+
+				// データ値更新
+
+
+
+
+				// データチェンジモード更新
+				Dictionary<int, DataChangeMng> changeMap = ChangeDataMap[valueInfo.StationNo];
+				DataChangeMng changeMng = changeMap[valueInfo.EquipNo];
+				changeMng.ValueChange = update.ValueChange;
+			}
+		}
 	}
 }

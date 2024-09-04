@@ -242,7 +242,128 @@ namespace YodogawaTest
 		/// <param name="e"></param>
 		private void updateButton_Click(object sender, EventArgs e)
 		{
-			UpdateChangeData();
+			int indx = tabControl.SelectedIndex;
+			UpdateFromGridView(indx);
+			ShowGridView(indx);
 		}
+
+		/// <summary>
+		/// 画面データ更新処理
+		/// </summary>
+		/// <param name="indx"></param>
+		private void UpdateFromGridView(int indx = 0)
+		{
+			switch(indx)
+			{
+			case 0:
+				UpdateFromGateGridView();
+				break;
+			case 1:
+				UpdateFromSekiGridView();
+				break;
+			case 2:
+				UpdateFromRiverGridView();
+				break;
+			case 3:
+				UpdateFromDamGridView();
+				break;
+			case 4:
+				UpdateFromRainGridView();
+				break;
+			}
+		}
+
+		/// <summary>
+		/// ゲート一覧更新
+		/// </summary>
+		private void UpdateFromGateGridView()
+		{
+			GateContext context = new GateContext();
+			List<UpdateData> updateList = new List<UpdateData>();
+			foreach(DataGridViewRow row in gateDataGridView.Rows)
+			{
+				UpdateData update = new UpdateData();
+				update.ValueStatus = (DataStatus)gateDataGridView[1, row.Index].Value;
+				update.ValueView = (string)gateDataGridView[2, row.Index].Value;
+				update.ValueUpdate = (string)gateDataGridView[3, row.Index].Value;
+				update.ValueChange = (DataChange)gateDataGridView[4, row.Index].Value;
+				updateList.Add(update);
+			}
+			context.UpdateKansokuDataList(updateList);
+		}
+
+		/// <summary>
+		/// 大堰周辺一覧更新
+		/// </summary>
+		private void UpdateFromSekiGridView()
+		{
+			SekiContext context = new SekiContext();
+			List<UpdateData> updateList = new List<UpdateData>();
+			foreach(DataGridViewRow row in sekiDataGridView.Rows)
+			{
+				UpdateData update = new UpdateData();
+				update.ValueStatus = (DataStatus)sekiDataGridView[1, row.Index].Value;
+				update.ValueView = (string)sekiDataGridView[2, row.Index].Value;
+				update.ValueUpdate = (string)sekiDataGridView[3, row.Index].Value;
+				update.ValueChange = (DataChange)sekiDataGridView[4, row.Index].Value;
+				updateList.Add(update);
+			}
+		}
+
+		/// <summary>
+		/// 河川一覧更新
+		/// </summary>
+		private void UpdateFromRiverGridView()
+		{
+			RiverContext context = new RiverContext();
+			List<UpdateData> updateList = new List<UpdateData>();
+			foreach(DataGridViewRow row in riverDataGridView.Rows)
+			{
+				UpdateData update = new UpdateData();
+				update.ValueStatus = (DataStatus)riverDataGridView[1, row.Index].Value;
+				update.ValueView = (string)riverDataGridView[2, row.Index].Value;
+				update.ValueUpdate = (string)riverDataGridView[3, row.Index].Value;
+				update.ValueChange = (DataChange)riverDataGridView[4, row.Index].Value;
+				updateList.Add(update);
+			}
+		}
+
+		/// <summary>
+		/// ダム一覧更新
+		/// </summary>
+		private void UpdateFromDamGridView()
+		{
+			DamContext context = new DamContext();
+			List<UpdateData> updateList = new List<UpdateData>();
+			foreach(DataGridViewRow row in damDataGridView.Rows)
+			{
+				UpdateData update = new UpdateData();
+				update.ValueStatus = (DataStatus)damDataGridView[1, row.Index].Value;
+				update.ValueView = (string)damDataGridView[2, row.Index].Value;
+				update.ValueUpdate = (string)damDataGridView[3, row.Index].Value;
+				update.ValueChange = (DataChange)damDataGridView[4, row.Index].Value;
+				updateList.Add(update);
+			}
+		}
+
+		/// <summary>
+		/// 雨量一覧更新
+		/// </summary>
+		private void UpdateFromRainGridView()
+		{
+			RainContext context = new RainContext();
+			List<UpdateData> updateList = new List<UpdateData>();
+			foreach(DataGridViewRow row in rainDataGridView.Rows)
+			{
+				UpdateData update = new UpdateData();
+				update.ValueStatus = (DataStatus)rainDataGridView[1, row.Index].Value;
+				update.ValueView = (string)rainDataGridView[2, row.Index].Value;
+				update.ValueUpdate = (string)rainDataGridView[3, row.Index].Value;
+				update.ValueChange = (DataChange)rainDataGridView[4, row.Index].Value;
+				updateList.Add(update);
+			}
+		}
+
+
 	}
 }

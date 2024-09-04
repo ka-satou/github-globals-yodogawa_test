@@ -39,6 +39,11 @@ namespace YodogawaTest
 			this.gateValueChange = new System.Windows.Forms.DataGridViewComboBoxColumn();
 			this.sekiPage = new System.Windows.Forms.TabPage();
 			this.sekiDataGridView = new System.Windows.Forms.DataGridView();
+			this.sekiPointName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.sekiValueStatus = new System.Windows.Forms.DataGridViewComboBoxColumn();
+			this.sekiValueView = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.sekiValueUpdate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.sekiValueChange = new System.Windows.Forms.DataGridViewComboBoxColumn();
 			this.riverPage = new System.Windows.Forms.TabPage();
 			this.riverDataGridView = new System.Windows.Forms.DataGridView();
 			this.riverPointName = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -62,11 +67,6 @@ namespace YodogawaTest
 			this.rainValueChange = new System.Windows.Forms.DataGridViewComboBoxColumn();
 			this.refreshButton = new System.Windows.Forms.CheckBox();
 			this.updateButton = new System.Windows.Forms.Button();
-			this.sekiPointName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.sekiValueStatus = new System.Windows.Forms.DataGridViewComboBoxColumn();
-			this.sekiValueView = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.sekiValueUpdate = new System.Windows.Forms.DataGridViewTextBoxColumn();
-			this.sekiValueChange = new System.Windows.Forms.DataGridViewComboBoxColumn();
 			this.tabControl.SuspendLayout();
 			this.gatePage.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.gateDataGridView)).BeginInit();
@@ -90,7 +90,7 @@ namespace YodogawaTest
 			this.tabControl.Location = new System.Drawing.Point(12, 12);
 			this.tabControl.Name = "tabControl";
 			this.tabControl.SelectedIndex = 0;
-			this.tabControl.Size = new System.Drawing.Size(790, 529);
+			this.tabControl.Size = new System.Drawing.Size(786, 850);
 			this.tabControl.TabIndex = 1;
 			this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
 			// 
@@ -99,7 +99,7 @@ namespace YodogawaTest
 			this.gatePage.Controls.Add(this.gateDataGridView);
 			this.gatePage.Location = new System.Drawing.Point(4, 22);
 			this.gatePage.Name = "gatePage";
-			this.gatePage.Size = new System.Drawing.Size(782, 503);
+			this.gatePage.Size = new System.Drawing.Size(778, 824);
 			this.gatePage.TabIndex = 4;
 			this.gatePage.Text = "ゲート";
 			this.gatePage.UseVisualStyleBackColor = true;
@@ -118,8 +118,9 @@ namespace YodogawaTest
 			this.gateDataGridView.Location = new System.Drawing.Point(0, 0);
 			this.gateDataGridView.Name = "gateDataGridView";
 			this.gateDataGridView.RowTemplate.Height = 21;
-			this.gateDataGridView.Size = new System.Drawing.Size(800, 500);
+			this.gateDataGridView.Size = new System.Drawing.Size(785, 825);
 			this.gateDataGridView.TabIndex = 0;
+
 			// 
 			// gatePointName
 			// 
@@ -155,7 +156,7 @@ namespace YodogawaTest
 			this.sekiPage.Location = new System.Drawing.Point(4, 22);
 			this.sekiPage.Name = "sekiPage";
 			this.sekiPage.Padding = new System.Windows.Forms.Padding(3);
-			this.sekiPage.Size = new System.Drawing.Size(782, 503);
+			this.sekiPage.Size = new System.Drawing.Size(778, 824);
 			this.sekiPage.TabIndex = 0;
 			this.sekiPage.Text = "大堰周辺";
 			this.sekiPage.UseVisualStyleBackColor = true;
@@ -174,8 +175,36 @@ namespace YodogawaTest
 			this.sekiDataGridView.Location = new System.Drawing.Point(-2, 0);
 			this.sekiDataGridView.Name = "sekiDataGridView";
 			this.sekiDataGridView.RowTemplate.Height = 21;
-			this.sekiDataGridView.Size = new System.Drawing.Size(786, 503);
+			this.sekiDataGridView.Size = new System.Drawing.Size(785, 825);
 			this.sekiDataGridView.TabIndex = 1;
+			// 
+			// sekiPointName
+			// 
+			this.sekiPointName.HeaderText = "観測地点";
+			this.sekiPointName.Name = "sekiPointName";
+			this.sekiPointName.Width = 180;
+			// 
+			// sekiValueStatus
+			// 
+			this.sekiValueStatus.HeaderText = "観測データ状態";
+			this.sekiValueStatus.Name = "sekiValueStatus";
+			// 
+			// sekiValueView
+			// 
+			this.sekiValueView.HeaderText = "観測データ表示";
+			this.sekiValueView.Name = "sekiValueView";
+			this.sekiValueView.Width = 120;
+			// 
+			// sekiValueUpdate
+			// 
+			this.sekiValueUpdate.HeaderText = "観測データ編集";
+			this.sekiValueUpdate.Name = "sekiValueUpdate";
+			this.sekiValueUpdate.Width = 120;
+			// 
+			// sekiValueChange
+			// 
+			this.sekiValueChange.HeaderText = "観測データ変化";
+			this.sekiValueChange.Name = "sekiValueChange";
 			// 
 			// riverPage
 			// 
@@ -183,7 +212,7 @@ namespace YodogawaTest
 			this.riverPage.Location = new System.Drawing.Point(4, 22);
 			this.riverPage.Name = "riverPage";
 			this.riverPage.Padding = new System.Windows.Forms.Padding(3);
-			this.riverPage.Size = new System.Drawing.Size(782, 503);
+			this.riverPage.Size = new System.Drawing.Size(778, 824);
 			this.riverPage.TabIndex = 1;
 			this.riverPage.Text = "河川";
 			this.riverPage.UseVisualStyleBackColor = true;
@@ -202,7 +231,7 @@ namespace YodogawaTest
 			this.riverDataGridView.Location = new System.Drawing.Point(-2, 0);
 			this.riverDataGridView.Name = "riverDataGridView";
 			this.riverDataGridView.RowTemplate.Height = 21;
-			this.riverDataGridView.Size = new System.Drawing.Size(786, 503);
+			this.riverDataGridView.Size = new System.Drawing.Size(785, 825);
 			this.riverDataGridView.TabIndex = 1;
 			// 
 			// riverPointName
@@ -239,7 +268,7 @@ namespace YodogawaTest
 			this.damPage.Location = new System.Drawing.Point(4, 22);
 			this.damPage.Name = "damPage";
 			this.damPage.Padding = new System.Windows.Forms.Padding(3);
-			this.damPage.Size = new System.Drawing.Size(782, 503);
+			this.damPage.Size = new System.Drawing.Size(778, 824);
 			this.damPage.TabIndex = 2;
 			this.damPage.Text = "ダム";
 			this.damPage.UseVisualStyleBackColor = true;
@@ -258,7 +287,7 @@ namespace YodogawaTest
 			this.damDataGridView.Location = new System.Drawing.Point(-2, 0);
 			this.damDataGridView.Name = "damDataGridView";
 			this.damDataGridView.RowTemplate.Height = 21;
-			this.damDataGridView.Size = new System.Drawing.Size(786, 500);
+			this.damDataGridView.Size = new System.Drawing.Size(785, 825);
 			this.damDataGridView.TabIndex = 1;
 			// 
 			// damPointName
@@ -295,7 +324,7 @@ namespace YodogawaTest
 			this.rainPage.Location = new System.Drawing.Point(4, 22);
 			this.rainPage.Name = "rainPage";
 			this.rainPage.Padding = new System.Windows.Forms.Padding(3);
-			this.rainPage.Size = new System.Drawing.Size(782, 503);
+			this.rainPage.Size = new System.Drawing.Size(778, 824);
 			this.rainPage.TabIndex = 3;
 			this.rainPage.Text = "雨量";
 			this.rainPage.UseVisualStyleBackColor = true;
@@ -314,7 +343,7 @@ namespace YodogawaTest
 			this.rainDataGridView.Location = new System.Drawing.Point(-2, 0);
 			this.rainDataGridView.Name = "rainDataGridView";
 			this.rainDataGridView.RowTemplate.Height = 21;
-			this.rainDataGridView.Size = new System.Drawing.Size(786, 500);
+			this.rainDataGridView.Size = new System.Drawing.Size(785, 825);
 			this.rainDataGridView.TabIndex = 1;
 			// 
 			// rainPointName
@@ -348,7 +377,7 @@ namespace YodogawaTest
 			// refreshButton
 			// 
 			this.refreshButton.Appearance = System.Windows.Forms.Appearance.Button;
-			this.refreshButton.Location = new System.Drawing.Point(16, 552);
+			this.refreshButton.Location = new System.Drawing.Point(12, 866);
 			this.refreshButton.Name = "refreshButton";
 			this.refreshButton.Size = new System.Drawing.Size(104, 34);
 			this.refreshButton.TabIndex = 2;
@@ -359,7 +388,7 @@ namespace YodogawaTest
 			// 
 			// updateButton
 			// 
-			this.updateButton.Location = new System.Drawing.Point(700, 547);
+			this.updateButton.Location = new System.Drawing.Point(700, 866);
 			this.updateButton.Name = "updateButton";
 			this.updateButton.Size = new System.Drawing.Size(98, 33);
 			this.updateButton.TabIndex = 3;
@@ -367,39 +396,11 @@ namespace YodogawaTest
 			this.updateButton.UseVisualStyleBackColor = true;
 			this.updateButton.Click += new System.EventHandler(this.updateButton_Click);
 			// 
-			// sekiPointName
-			// 
-			this.sekiPointName.HeaderText = "観測地点";
-			this.sekiPointName.Name = "sekiPointName";
-			this.sekiPointName.Width = 180;
-			// 
-			// sekiValueStatus
-			// 
-			this.sekiValueStatus.HeaderText = "観測データ状態";
-			this.sekiValueStatus.Name = "sekiValueStatus";
-			// 
-			// sekiValueView
-			// 
-			this.sekiValueView.HeaderText = "観測データ表示";
-			this.sekiValueView.Name = "sekiValueView";
-			this.sekiValueView.Width = 120;
-			// 
-			// sekiValueUpdate
-			// 
-			this.sekiValueUpdate.HeaderText = "観測データ編集";
-			this.sekiValueUpdate.Name = "sekiValueUpdate";
-			this.sekiValueUpdate.Width = 120;
-			// 
-			// sekiValueChange
-			// 
-			this.sekiValueChange.HeaderText = "観測データ変化";
-			this.sekiValueChange.Name = "sekiValueChange";
-			// 
 			// TestConsolForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(810, 598);
+			this.ClientSize = new System.Drawing.Size(815, 911);
 			this.Controls.Add(this.updateButton);
 			this.Controls.Add(this.refreshButton);
 			this.Controls.Add(this.tabControl);
