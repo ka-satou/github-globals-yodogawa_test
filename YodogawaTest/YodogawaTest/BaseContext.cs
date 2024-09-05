@@ -631,15 +631,56 @@ namespace YodogawaTest
 		/// <param name="updates"></param>
 		public void UpdateKansokuDataList(List<ValueInfo> valueInfos, List<UpdateData> updates)
 		{
+			List<int> recentList = new List<int>(){1,2,3,4,5};
+			List<int> recentRiverList = new List<int>(){8,9,10,11,12};
+			Dictionary<int, RecentDataEntity> recentUpdateList = new Dictionary<int, RecentDataEntity>();
+			Dictionary<int, RecentRiverDataEntity> recentRiverUpdateList = new Dictionary<int, RecentRiverDataEntity>();
+
+			List<RecentDataEntity> recents = null;
+			List<RecentRiverDataEntity> recentRivers = null;
+			RecentDataEntity selRecent = null;
+			RecentRiverDataEntity selRecentRiver = null;
+
+			recents = DBInterface.FindRecentDataListBy(recentList);
+			recentRivers = DBInterface.FindRecentRiverDataListBy(recentRiverList);
+
 			foreach (var item in valueInfos.Zip(updates, (valueInfo, update) => new { valueInfo, update }))
 			{
 				ValueInfo valueInfo = item.valueInfo;
 				UpdateData update = item.update;
 
+				KeisokuDataInfoEntity keisokuInfo
+					= keisokuList.Where(k => k.StationNo == valueInfo.StationNo && k.EquipNo == valueInfo.EquipNo).FirstOrDefault();
+				valueInfo.Point = keisokuInfo.DecimalPoint;
+
 				// データ値更新
-				
+				Dictionary<int,CloumName> propMap = PropertyMap[valueInfo.StationNo];
+				CloumName cloum = propMap[valueInfo.EquipNo];
 
-
+				if(valueInfo.StationNo <= 7)
+				{
+					if(!recentUpdateList.ContainsKey(valueInfo.StationNo))
+					{
+						selRecent = recents.Where(x => x.StationNo == valueInfo.StationNo).FirstOrDefault();
+					}
+					else
+					{
+						selRecent = recentUpdateList[valueInfo.StationNo];
+					}
+					UpdateValue<RecentDataEntity>(valueInfo, cloum, selRecent, update, recentUpdateList);
+				}
+				else
+				{
+					if(!recentRiverUpdateList.ContainsKey(valueInfo.StationNo))
+					{
+						selRecentRiver = recentRivers.Where(x => x.StationNo == valueInfo.StationNo).FirstOrDefault();
+					}
+					else
+					{
+						selRecentRiver = recentRiverUpdateList[valueInfo.StationNo];
+					}
+					UpdateValue<RecentRiverDataEntity>(valueInfo, cloum, selRecentRiver, update, recentRiverUpdateList);
+				}
 
 				// データチェンジモード更新
 				Dictionary<int, DataChangeMng> changeMap = ChangeDataMap[valueInfo.StationNo];
@@ -649,6 +690,79 @@ namespace YodogawaTest
 					changeMng.ValueChange = update.ValueChange;
 				}
 			}
+			// DBデータ更新
+			foreach (KeyValuePair<int, RecentDataEntity> kvp in recentUpdateList)
+			{
+				int stationNo = kvp.Key;
+				RecentDataEntity dataEntity = kvp.Value;
+				DBInterface.UpdateRecentDataListBy(stationNo, dataEntity);
+			}
+			foreach (KeyValuePair<int, RecentRiverDataEntity> kvp in recentRiverUpdateList)
+			{
+				int stationNo = kvp.Key;
+				RecentRiverDataEntity dataEntity = kvp.Value;
+				DBInterface.UpdateRecentRiverDataListBy(stationNo, dataEntity);
+			}
+		}
+
+		/// <summary>
+		/// データ状態/データ値更新
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="valueInfo"></param>
+		/// <param name="cloum"></param>
+		/// <param name="data"></param>
+		/// <param name="update"></param>
+		/// <param name="updateList"></param>
+		private void UpdateValue<T>(ValueInfo valueInfo, CloumName cloum,T data,UpdateData update,Dictionary<int,T> updateList)
+		{
+			if(typeof(T).GetProperty(cloum.StatusCloum) is PropertyInfo propertyInfoStatus)
+			{
+				int status = (int)propertyInfoStatus.GetValue(data);
+				if((DataStatus)status != update.ValueStatus)
+				{
+					SetPropertyValue<T>(data, cloum.StatusCloum, update.ValueStatus);
+					updateList[valueInfo.StationNo] = data;
+				}
+			}
+			if(typeof(T).GetProperty(cloum.ValueCloum) is PropertyInfo propertyInfoValue)
+			{
+				int value = (int)propertyInfoValue.GetValue(data);
+				int updateValue = GetNumValue(valueInfo, update.ValueUpdate);
+				if(value != updateValue)
+				{
+					SetPropertyValue<T>(data, cloum.ValueCloum, updateValue);
+					updateList[valueInfo.StationNo] = data;
+				}
+			}
+		}
+
+		/// <summary>
+		/// データ数値取得
+		/// </summary>
+		/// <param name="valueInfo"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		int GetNumValue(ValueInfo valueInfo, string value)
+		{
+			int result = 0;
+			if (valueInfo.Point == 2)
+			{
+				double data = double.Parse(value);
+				data = data * 100;
+				result = (int)data;
+			}
+			else if (valueInfo.Point == 1)
+			{
+				double data = double.Parse(value);
+				data = data * 10;
+				result = (int)data;
+			}
+			else
+			{
+				result = int.Parse(value);
+			}
+			return result;
 		}
 	}
 }
