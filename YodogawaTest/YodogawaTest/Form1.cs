@@ -40,6 +40,8 @@ namespace YodogawaTest
 			(int)DataChange.Rise, (int)DataChange.Fall, (int)DataChange.Horizon
 		};
 
+		private Timer _timer = null;	// データ更新タイマー
+
 		/// <summary>
 		/// コンストラクタ
 		/// </summary>
@@ -228,10 +230,12 @@ namespace YodogawaTest
 			if(chkBox.Checked == true)
 			{
 				// データリフレシュタイマー開始
+				StartTimer();
 			}
 			else
 			{
 				// データリフレシュタイマー停止
+				StopTimer();
 			}
 		}
 
@@ -451,6 +455,43 @@ namespace YodogawaTest
 				dgv.BeginEdit(false);
 				((DataGridViewComboBoxEditingControl)dgv.EditingControl).DroppedDown = true;
 			}
+		}
+
+		/// <summary>
+		/// タイマー開始
+		/// </summary>
+		private void StartTimer()
+		{
+		
+			Timer timer = new Timer();
+			timer.Tick += new EventHandler(TickHandler);
+			timer.Interval = 2000;
+			timer.Start();
+			_timer = timer;
+		}
+
+		/// <summary>
+		/// タイマー停止
+		/// </summary>
+		private void StopTimer()
+		{
+			if (_timer == null) {
+				return;
+			}
+			_timer.Stop();
+			_timer = null;
+		}
+
+		/// <summary>
+		/// タイマーイベントハンドラ
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void TickHandler(object sender, EventArgs e)
+		{
+			int indx = tabControl.SelectedIndex;
+			UpdateChangeData();
+			ShowGridView(indx);
 		}
 	}
 }
