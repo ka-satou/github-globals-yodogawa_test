@@ -120,7 +120,7 @@ namespace YodogawaTest
 			this.gateDataGridView.RowTemplate.Height = 21;
 			this.gateDataGridView.Size = new System.Drawing.Size(785, 825);
 			this.gateDataGridView.TabIndex = 0;
-
+			this.gateDataGridView.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.gateDataGridView_CellEnter);
 			// 
 			// gatePointName
 			// 
@@ -177,6 +177,7 @@ namespace YodogawaTest
 			this.sekiDataGridView.RowTemplate.Height = 21;
 			this.sekiDataGridView.Size = new System.Drawing.Size(785, 825);
 			this.sekiDataGridView.TabIndex = 1;
+			this.sekiDataGridView.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.sekiDataGridView_CellEnter);
 			// 
 			// sekiPointName
 			// 
@@ -233,6 +234,7 @@ namespace YodogawaTest
 			this.riverDataGridView.RowTemplate.Height = 21;
 			this.riverDataGridView.Size = new System.Drawing.Size(785, 825);
 			this.riverDataGridView.TabIndex = 1;
+			this.riverDataGridView.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.riverDataGridView_CellEnter);
 			// 
 			// riverPointName
 			// 
@@ -289,6 +291,7 @@ namespace YodogawaTest
 			this.damDataGridView.RowTemplate.Height = 21;
 			this.damDataGridView.Size = new System.Drawing.Size(785, 825);
 			this.damDataGridView.TabIndex = 1;
+			this.damDataGridView.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.damDataGridView_CellEnter);
 			// 
 			// damPointName
 			// 
@@ -345,6 +348,7 @@ namespace YodogawaTest
 			this.rainDataGridView.RowTemplate.Height = 21;
 			this.rainDataGridView.Size = new System.Drawing.Size(785, 825);
 			this.rainDataGridView.TabIndex = 1;
+			this.rainDataGridView.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.rainDataGridView_CellEnter);
 			// 
 			// rainPointName
 			// 

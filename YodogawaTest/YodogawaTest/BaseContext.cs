@@ -637,14 +637,17 @@ namespace YodogawaTest
 				UpdateData update = item.update;
 
 				// データ値更新
-
+				
 
 
 
 				// データチェンジモード更新
 				Dictionary<int, DataChangeMng> changeMap = ChangeDataMap[valueInfo.StationNo];
-				DataChangeMng changeMng = changeMap[valueInfo.EquipNo];
-				changeMng.ValueChange = update.ValueChange;
+				if (changeMap.ContainsKey(valueInfo.EquipNo))
+				{
+					DataChangeMng changeMng = changeMap[valueInfo.EquipNo];
+					changeMng.ValueChange = update.ValueChange;
+				}
 			}
 		}
 	}

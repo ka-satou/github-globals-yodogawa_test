@@ -46,10 +46,23 @@ namespace YodogawaTest
 //			new ValueInfo{ StationNo = 6, EquipNo = 61, Point = 0, },
 		};
 
+		/// <summary>
+		/// 計測データリスト作成
+		/// </summary>
+		/// <returns></returns>
 		public List<KansokuData> CreateKansokuDataList()
 		{
 			List<KansokuData> kansokus = CreateKansokuDataList(valueInfos);
 			return kansokus;
+		}
+
+		/// <summary>
+		/// 計測データリスト更新
+		/// </summary>
+		/// <param name="updates"></param>
+		public void UpdateKansokuDataList(List<UpdateData> updates)
+		{
+			UpdateKansokuDataList(valueInfos, updates);
 		}
 	}
 }

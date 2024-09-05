@@ -22,9 +22,9 @@ namespace YodogawaTest
 		{
 			"欠測", "正常", "点検", "異常", "データ異常", "無効"
 		};
-		private static List<DataStatus> valueStatusIdList { get; set; } = new List<DataStatus>
+		private static List<int> valueStatusIdList { get; set; } = new List<int>
 		{
-			DataStatus.Missing, DataStatus.Normal, DataStatus.Inspection, DataStatus.Abnormal, DataStatus.DataAbnormal, DataStatus.Invalid
+			(int)DataStatus.Missing, (int)DataStatus.Normal, (int)DataStatus.Inspection, (int)DataStatus.Abnormal, (int)DataStatus.DataAbnormal, (int)DataStatus.Invalid
 		};
 
 		/// <summary>
@@ -35,9 +35,9 @@ namespace YodogawaTest
 		{
 			"上昇", "下降", "水平"
 		};
-		private static List<DataChange> valueChangeIdList  { get; set; } = new List<DataChange>
+		private static List<int> valueChangeIdList  { get; set; } = new List<int>
 		{
-			DataChange.Rise, DataChange.Fall, DataChange.Horizon
+			(int)DataChange.Rise, (int)DataChange.Fall, (int)DataChange.Horizon
 		};
 
 		/// <summary>
@@ -49,7 +49,7 @@ namespace YodogawaTest
 
 			// ValueStatus
 			valueStatusDS.Columns.Add("name", typeof(string));
-			valueStatusDS.Columns.Add("id", typeof(DataStatus));
+			valueStatusDS.Columns.Add("id", typeof(int));
 			for(int index = 0;index < 6;index++)
 			{
 				DataRow dr = valueStatusDS.NewRow();
@@ -75,7 +75,7 @@ namespace YodogawaTest
 
 			// ValueChange
 			valueChangeDS.Columns.Add("name", typeof(string));
-			valueChangeDS.Columns.Add("id", typeof(DataChange));
+			valueChangeDS.Columns.Add("id", typeof(int));
 			for(int index = 0;index < 3;index++)
 			{
 				DataRow dr = valueChangeDS.NewRow();
@@ -157,7 +157,7 @@ namespace YodogawaTest
 			gateDataGridView.Rows.Clear();
 			foreach(KansokuData kansoku in kansokus)
 			{
-				gateDataGridView.Rows.Add(kansoku.PointName,kansoku.ValueStatus,kansoku.ValueView,kansoku.ValueUpdate,kansoku.ValueChange);
+				gateDataGridView.Rows.Add(kansoku.PointName,(int)kansoku.ValueStatus,kansoku.ValueView,kansoku.ValueUpdate,(int)kansoku.ValueChange);
 			}
 		}
 
@@ -171,7 +171,7 @@ namespace YodogawaTest
 			sekiDataGridView.Rows.Clear();
 			foreach(KansokuData kansoku in kansokus)
 			{
-				sekiDataGridView.Rows.Add(kansoku.PointName,kansoku.ValueStatus,kansoku.ValueView,kansoku.ValueUpdate,kansoku.ValueChange);
+				sekiDataGridView.Rows.Add(kansoku.PointName,(int)kansoku.ValueStatus,kansoku.ValueView,kansoku.ValueUpdate,(int)kansoku.ValueChange);
 			}
 		}
 
@@ -185,7 +185,7 @@ namespace YodogawaTest
 			riverDataGridView.Rows.Clear();
 			foreach(KansokuData kansoku in kansokus)
 			{
-				riverDataGridView.Rows.Add(kansoku.PointName,kansoku.ValueStatus,kansoku.ValueView,kansoku.ValueUpdate,kansoku.ValueChange);
+				riverDataGridView.Rows.Add(kansoku.PointName,(int)kansoku.ValueStatus,kansoku.ValueView,kansoku.ValueUpdate,(int)kansoku.ValueChange);
 			}
 		}
 
@@ -199,7 +199,7 @@ namespace YodogawaTest
 			damDataGridView.Rows.Clear();
 			foreach(KansokuData kansoku in kansokus)
 			{
-				damDataGridView.Rows.Add(kansoku.PointName,kansoku.ValueStatus,kansoku.ValueView,kansoku.ValueUpdate,kansoku.ValueChange);
+				damDataGridView.Rows.Add(kansoku.PointName,(int)kansoku.ValueStatus,kansoku.ValueView,kansoku.ValueUpdate,(int)kansoku.ValueChange);
 			}
 		}
 
@@ -213,7 +213,7 @@ namespace YodogawaTest
 			rainDataGridView.Rows.Clear();
 			foreach(KansokuData kansoku in kansokus)
 			{
-				rainDataGridView.Rows.Add(kansoku.PointName,kansoku.ValueStatus,kansoku.ValueView,kansoku.ValueUpdate,kansoku.ValueChange);
+				rainDataGridView.Rows.Add(kansoku.PointName,(int)kansoku.ValueStatus,kansoku.ValueView,kansoku.ValueUpdate,(int)kansoku.ValueChange);
 			}
 		}
 
@@ -308,6 +308,7 @@ namespace YodogawaTest
 				update.ValueChange = (DataChange)sekiDataGridView[4, row.Index].Value;
 				updateList.Add(update);
 			}
+			context.UpdateKansokuDataList(updateList);
 		}
 
 		/// <summary>
@@ -326,6 +327,7 @@ namespace YodogawaTest
 				update.ValueChange = (DataChange)riverDataGridView[4, row.Index].Value;
 				updateList.Add(update);
 			}
+			context.UpdateKansokuDataList(updateList);
 		}
 
 		/// <summary>
@@ -344,6 +346,7 @@ namespace YodogawaTest
 				update.ValueChange = (DataChange)damDataGridView[4, row.Index].Value;
 				updateList.Add(update);
 			}
+			context.UpdateKansokuDataList(updateList);
 		}
 
 		/// <summary>
@@ -362,8 +365,92 @@ namespace YodogawaTest
 				update.ValueChange = (DataChange)rainDataGridView[4, row.Index].Value;
 				updateList.Add(update);
 			}
+			context.UpdateKansokuDataList(updateList);
 		}
 
+		/// <summary>
+		/// ゲートコンボボックスコントローラ制御
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void gateDataGridView_CellEnter(object sender, DataGridViewCellEventArgs e)
+		{
+			DataGridView dgv = (DataGridView)sender;
+			if(
+				(dgv.Columns[e.ColumnIndex].Name == "gateValueStatus") ||
+				(dgv.Columns[e.ColumnIndex].Name == "gateValueChange")
+			){
+				dgv.BeginEdit(false);
+				((DataGridViewComboBoxEditingControl)dgv.EditingControl).DroppedDown = true;
+			}
+		}
 
+		/// <summary>
+		/// 大堰周辺コンボボックスコントローラ制御
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void sekiDataGridView_CellEnter(object sender, DataGridViewCellEventArgs e)
+		{
+			DataGridView dgv = (DataGridView)sender;
+			if(
+				(dgv.Columns[e.ColumnIndex].Name == "sekiValueStatus") ||
+				(dgv.Columns[e.ColumnIndex].Name == "sekiValueChange")
+			){
+				dgv.BeginEdit(false);
+				((DataGridViewComboBoxEditingControl)dgv.EditingControl).DroppedDown = true;
+			}
+		}
+
+		/// <summary>
+		/// 河川コンボボックスコントローラ制御
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void riverDataGridView_CellEnter(object sender, DataGridViewCellEventArgs e)
+		{
+			DataGridView dgv = (DataGridView)sender;
+			if(
+				(dgv.Columns[e.ColumnIndex].Name == "riverValueStatus") ||
+				(dgv.Columns[e.ColumnIndex].Name == "riverValueChange")
+			){
+				dgv.BeginEdit(false);
+				((DataGridViewComboBoxEditingControl)dgv.EditingControl).DroppedDown = true;
+			}
+		}
+
+		/// <summary>
+		/// ダムコンボボックスコントローラ制御
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void damDataGridView_CellEnter(object sender, DataGridViewCellEventArgs e)
+		{
+			DataGridView dgv = (DataGridView)sender;
+			if(
+				(dgv.Columns[e.ColumnIndex].Name == "damValueStatus") ||
+				(dgv.Columns[e.ColumnIndex].Name == "damValueChange")
+			){
+				dgv.BeginEdit(false);
+				((DataGridViewComboBoxEditingControl)dgv.EditingControl).DroppedDown = true;
+			}
+		}
+
+		/// <summary>
+		/// 雨量コンボボックスコントローラ制御
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void rainDataGridView_CellEnter(object sender, DataGridViewCellEventArgs e)
+		{
+			DataGridView dgv = (DataGridView)sender;
+			if(
+				(dgv.Columns[e.ColumnIndex].Name == "rainValueStatus") ||
+				(dgv.Columns[e.ColumnIndex].Name == "rainValueChange")
+			){
+				dgv.BeginEdit(false);
+				((DataGridViewComboBoxEditingControl)dgv.EditingControl).DroppedDown = true;
+			}
+		}
 	}
 }
