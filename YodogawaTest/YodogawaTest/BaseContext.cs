@@ -414,79 +414,7 @@ namespace YodogawaTest
 		}
 
 
-		/// <summary>
-		/// データ取得
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="dataEntity"></param>
-		/// <param name="valueInfo"></param>
-		/// <returns></returns>
-		public ValueResult GetValue<T>(T dataEntity, ValueInfo valueInfo)
-		{
-			ValueResult result = new ValueResult();
 
-			Dictionary<int,CloumName> propMap = PropertyMap[valueInfo.StationNo];
-			CloumName cloum = propMap[valueInfo.EquipNo];
-
-			if(typeof(T).GetProperty(cloum.StatusCloum) is PropertyInfo propertyInfoStatus)
-			{
-				int status = (int)propertyInfoStatus.GetValue(dataEntity);
-				result.Status = (DataStatus)status;
-			}
-
-			if(typeof(T).GetProperty(cloum.ValueCloum) is PropertyInfo propertyInfoValue)
-			{
-				int value = (int)propertyInfoValue.GetValue(dataEntity);
-				result.Value = GetStringValue(valueInfo,value);
-			}
-
-			return result;
-		}
-
-		/// <summary>
-		/// データ文字列取得
-		/// </summary>
-		/// <param name="valueInfo"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		string GetStringValue(ValueInfo valueInfo, int value)
-		{
-			string result = "";
-			if (valueInfo.Point == 2)
-			{
-				double data = (double)value;
-				data = data / 100;
-				result = data.ToString("0.00");
-			}
-			else if (valueInfo.Point == 1)
-			{
-				double data = (double)value;
-				data = data / 10;
-				result = data.ToString("0.0");
-			}
-			else
-			{
-				result = value.ToString("0");
-			}
-			return result;
-		}
-
-		/// <summary>
-		/// プロパティへの値の設定
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="data"></param>
-		/// <param name="columnName"></param>
-		/// <param name="value"></param>
-		public static void SetPropertyValue<T>(T data, string columnName, object value)
-		{
-			// プロパティ情報の取得
-			if (typeof(T).GetProperty(columnName) is PropertyInfo propertyInfo)
-			{
-				// インスタンスの値を取得
-				propertyInfo.SetValue(data, value);
-			}
-		}
 
 		/// <summary>
 		/// データ変化管理設定
@@ -501,8 +429,9 @@ namespace YodogawaTest
 			DataChange result = DataChange.Horizon;
 			DataChangeMng changeMng = null;
 
-			Dictionary<int,CloumName> propMap = PropertyMap[valueInfo.StationNo];
-			CloumName cloum = propMap[valueInfo.EquipNo];
+//			Dictionary<int,CloumName> propMap = PropertyMap[valueInfo.StationNo];
+//			CloumName cloum = propMap[valueInfo.EquipNo];
+			CloumName cloum = GetCloumName(valueInfo.StationNo, valueInfo.EquipNo);
 
 			if(typeof(T).GetProperty(cloum.StatusCloum) is PropertyInfo propertyInfoStatus)
 			{
@@ -571,8 +500,9 @@ namespace YodogawaTest
 					{
 						int equip = kvp1.Key;
 						DataChangeMng dataChange = kvp1.Value;
-						Dictionary<int,CloumName> propMap = PropertyMap[station];
-						CloumName cloum = propMap[equip];
+//						Dictionary<int,CloumName> propMap = PropertyMap[station];
+//						CloumName cloum = propMap[equip];
+						CloumName cloum = GetCloumName(station, equip);
 						DataStatus valueStatus = DataStatus.Invalid;
 						if(station <= 7)
 						{
@@ -667,8 +597,9 @@ namespace YodogawaTest
 				valueInfo.Point = keisokuInfo.DecimalPoint;
 
 				// データ値更新
-				Dictionary<int,CloumName> propMap = PropertyMap[valueInfo.StationNo];
-				CloumName cloum = propMap[valueInfo.EquipNo];
+//				Dictionary<int,CloumName> propMap = PropertyMap[valueInfo.StationNo];
+//				CloumName cloum = propMap[valueInfo.EquipNo];
+				CloumName cloum = GetCloumName(valueInfo.StationNo, valueInfo.EquipNo);
 
 				if(valueInfo.StationNo <= 7)
 				{
@@ -715,6 +646,94 @@ namespace YodogawaTest
 				int stationNo = kvp.Key;
 				RecentRiverDataEntity dataEntity = kvp.Value;
 				DBInterface.UpdateRecentRiverDataListBy(stationNo, dataEntity);
+			}
+		}
+
+		/// <summary>
+		/// カラム名取得
+		/// </summary>
+		/// <param name="StationNo"></param>
+		/// <param name="EquipNo"></param>
+		/// <returns></returns>
+		private static CloumName GetCloumName(int StationNo, int EquipNo)
+		{
+			Dictionary<int,CloumName> propMap = PropertyMap[StationNo];
+			CloumName cloum = propMap[EquipNo];
+			return cloum;
+		}
+
+		/// <summary>
+		/// データ取得
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="dataEntity"></param>
+		/// <param name="valueInfo"></param>
+		/// <returns></returns>
+		public ValueResult GetValue<T>(T dataEntity, ValueInfo valueInfo)
+		{
+			ValueResult result = new ValueResult();
+
+//			Dictionary<int,CloumName> propMap = PropertyMap[valueInfo.StationNo];
+//			CloumName cloum = propMap[valueInfo.EquipNo];
+			CloumName cloum = GetCloumName(valueInfo.StationNo, valueInfo.EquipNo);
+
+			if(typeof(T).GetProperty(cloum.StatusCloum) is PropertyInfo propertyInfoStatus)
+			{
+				int status = (int)propertyInfoStatus.GetValue(dataEntity);
+				result.Status = (DataStatus)status;
+			}
+
+			if(typeof(T).GetProperty(cloum.ValueCloum) is PropertyInfo propertyInfoValue)
+			{
+				int value = (int)propertyInfoValue.GetValue(dataEntity);
+				result.Value = GetStringValue(valueInfo,value);
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// データ文字列取得
+		/// </summary>
+		/// <param name="valueInfo"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		string GetStringValue(ValueInfo valueInfo, int value)
+		{
+			string result = "";
+			if (valueInfo.Point == 2)
+			{
+				double data = (double)value;
+				data = data / 100;
+				result = data.ToString("0.00");
+			}
+			else if (valueInfo.Point == 1)
+			{
+				double data = (double)value;
+				data = data / 10;
+				result = data.ToString("0.0");
+			}
+			else
+			{
+				result = value.ToString("0");
+			}
+			return result;
+		}
+
+		/// <summary>
+		/// プロパティへの値の設定
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="data"></param>
+		/// <param name="columnName"></param>
+		/// <param name="value"></param>
+		public static void SetPropertyValue<T>(T data, string columnName, object value)
+		{
+			// プロパティ情報の取得
+			if (typeof(T).GetProperty(columnName) is PropertyInfo propertyInfo)
+			{
+				// インスタンスの値を取得
+				propertyInfo.SetValue(data, value);
 			}
 		}
 
