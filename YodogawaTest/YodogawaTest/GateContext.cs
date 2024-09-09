@@ -32,6 +32,9 @@ namespace YodogawaTest
 			new ValueInfo{ StationNo = 5, EquipNo = 14, Point = 0, },
 			new ValueInfo{ StationNo = 5, EquipNo = 15, Point = 0, },
 			new ValueInfo{ StationNo = 5, EquipNo = 16, Point = 0, },
+			new ValueInfo{ StationNo = 4, EquipNo = 11, Point = 0, },
+			new ValueInfo{ StationNo = 4, EquipNo = 12, Point = 0, },
+			new ValueInfo{ StationNo = 4, EquipNo = 13, Point = 0, },
 		};
 
 		/// <summary>

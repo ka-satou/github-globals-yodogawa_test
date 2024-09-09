@@ -168,6 +168,16 @@ namespace YodogawaTest
 		};
 
 		/// <summary>
+		/// 毛馬閘門ゲートカラム情報
+		/// </summary>
+		private static Dictionary<int,CloumName> KemaKoumonGateMap { get; } = new Dictionary<int, CloumName>
+		{
+			{ 11, new CloumName{ StatusCloum = "Status1", ValueCloum = "Data1" }},
+			{ 12, new CloumName{ StatusCloum = "Status2", ValueCloum = "Data2" }},
+			{ 13, new CloumName{ StatusCloum = "Status3", ValueCloum = "Data3" }},
+		};
+
+		/// <summary>
 		/// 一津屋樋門カラム情報
 		/// </summary>
 		private static Dictionary<int,CloumName> HitotuyaMap { get; } = new Dictionary<int, CloumName>
@@ -280,6 +290,7 @@ namespace YodogawaTest
 			{ 1, SekiMap },
 			{ 2, KemaKoumonMap },
 			{ 3, KemaSuimonMap },
+			{ 4, KemaKoumonGateMap },
 			{ 5, HitotuyaMap },
 			{ 8, River1Map },
 			{ 9, River2Map },
@@ -291,6 +302,7 @@ namespace YodogawaTest
 		private static Dictionary<int, DataChangeMng> SekiChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
 		public static Dictionary<int, DataChangeMng> KemaKoumonChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
 		private static Dictionary<int, DataChangeMng> KemaSuimonChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
+		public static Dictionary<int, DataChangeMng> KemaKoumonGateChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
 		private static Dictionary<int, DataChangeMng> HitotuyaChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
 		private static Dictionary<int, DataChangeMng> River1ChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
 		private static Dictionary<int, DataChangeMng> River2ChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
@@ -304,6 +316,7 @@ namespace YodogawaTest
 			{ 1, SekiChangeData },
 			{ 2, KemaKoumonChangeData },
 			{ 3, KemaSuimonChangeData },
+			{ 4, KemaKoumonGateChangeData },
 			{ 5, HitotuyaChangeData },
 			{ 8, River1ChangeData },
 			{ 9, River2ChangeData },
