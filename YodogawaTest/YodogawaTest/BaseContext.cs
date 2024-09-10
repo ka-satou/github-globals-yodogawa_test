@@ -133,34 +133,6 @@ namespace YodogawaTest
 		/// </summary>
 		private static Dictionary<SNoENoKey, DataChangeMng> ChangeDataMap { get; set; } = new Dictionary<SNoENoKey, DataChangeMng>();
 
-
-		private static Dictionary<int, DataChangeMng> SekiChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
-		public static Dictionary<int, DataChangeMng> KemaKoumonChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
-		private static Dictionary<int, DataChangeMng> KemaSuimonChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
-		public static Dictionary<int, DataChangeMng> KemaKoumonGateChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
-		private static Dictionary<int, DataChangeMng> HitotuyaChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
-		private static Dictionary<int, DataChangeMng> River1ChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
-		private static Dictionary<int, DataChangeMng> River2ChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
-		private static Dictionary<int, DataChangeMng> River3ChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
-		private static Dictionary<int, DataChangeMng> River4ChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
-		private static Dictionary<int, DataChangeMng> River5ChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
-
-/*
-		public static Dictionary<int, Dictionary<int, DataChangeMng>> ChangeDataMap { get; } = new Dictionary<int, Dictionary<int, DataChangeMng>>
-		{
-			{ 1, SekiChangeData },
-			{ 2, KemaKoumonChangeData },
-			{ 3, KemaSuimonChangeData },
-			{ 4, KemaKoumonGateChangeData },
-			{ 5, HitotuyaChangeData },
-			{ 8, River1ChangeData },
-			{ 9, River2ChangeData },
-			{ 10, River3ChangeData },
-			{ 11, River4ChangeData },
-			{ 12, River5ChangeData },
-		};
-*/
-
 		/// <summary>
 		/// 計測情報リスト
 		/// </summary>
@@ -223,7 +195,6 @@ namespace YodogawaTest
 			foreach(ValueInfo valueInfo in valueInfos)
 			{
 				KansokuData kansokuData = new KansokuData();
-//				kansokuData.ValueChange = DataChange.Horizon;
 				KeisokuDataInfoEntity keisokuInfo
 					= keisokuList.Where(k => k.StationNo == valueInfo.StationNo && k.EquipNo == valueInfo.EquipNo).FirstOrDefault();
 				kansokuData.PointName = keisokuInfo.Name;
@@ -283,10 +254,8 @@ namespace YodogawaTest
 				if(typeof(T).GetProperty(cloum.ValueCloum) is PropertyInfo propertyInfoValue)
 				{
 					int value = (int)propertyInfoValue.GetValue(dataEntity);
-//					Dictionary<int, DataChangeMng> changeData = ChangeDataMap[valueInfo.StationNo];
 					SNoENoKey key = new SNoENoKey(valueInfo.StationNo, valueInfo.EquipNo);
 					if(ChangeDataMap.ContainsKey(key))
-//					if(changeData.ContainsKey(valueInfo.EquipNo))
 					{
 						changeMng = ChangeDataMap[key];
 						changeMng.CurValue = value;
@@ -484,12 +453,9 @@ namespace YodogawaTest
 				}
 
 				// データチェンジモード更新
-//				Dictionary<int, DataChangeMng> changeMap = ChangeDataMap[valueInfo.StationNo];
-//				if (changeMap.ContainsKey(valueInfo.EquipNo))
 				SNoENoKey key = new SNoENoKey(valueInfo.StationNo, valueInfo.EquipNo);
 				if(ChangeDataMap.ContainsKey(key))
 				{
-//					DataChangeMng changeMng = changeMap[valueInfo.EquipNo];
 					DataChangeMng changeMng = ChangeDataMap[key];
 					changeMng.ValueChange = update.ValueChange;
 				}
