@@ -123,9 +123,15 @@ namespace YodogawaTest
 			}
 		}
 
-		private static Dictionary<SNoENoKey,CloumName> CloumMap { get; set; } = new Dictionary<SNoENoKey, CloumName>();
+		/// <summary>
+		/// カラム名マップ
+		/// </summary>
+		private static Dictionary<SNoENoKey, CloumName> CloumMap { get; set; } = new Dictionary<SNoENoKey, CloumName>();
 
-
+		/// <summary>
+		/// データ増減変化マップ
+		/// </summary>
+		private static Dictionary<SNoENoKey, DataChangeMng> ChangeDataMap { get; set; } = new Dictionary<SNoENoKey, DataChangeMng>();
 
 
 		private static Dictionary<int, DataChangeMng> SekiChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
@@ -139,7 +145,7 @@ namespace YodogawaTest
 		private static Dictionary<int, DataChangeMng> River4ChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
 		private static Dictionary<int, DataChangeMng> River5ChangeData { get; set; } = new Dictionary<int, DataChangeMng>();
 
-
+/*
 		public static Dictionary<int, Dictionary<int, DataChangeMng>> ChangeDataMap { get; } = new Dictionary<int, Dictionary<int, DataChangeMng>>
 		{
 			{ 1, SekiChangeData },
@@ -153,6 +159,7 @@ namespace YodogawaTest
 			{ 11, River4ChangeData },
 			{ 12, River5ChangeData },
 		};
+*/
 
 		/// <summary>
 		/// 計測情報リスト
@@ -251,9 +258,6 @@ namespace YodogawaTest
 			return kansokuDatas;
 		}
 
-
-
-
 		/// <summary>
 		/// データ変化管理設定
 		/// </summary>
@@ -279,13 +283,15 @@ namespace YodogawaTest
 				if(typeof(T).GetProperty(cloum.ValueCloum) is PropertyInfo propertyInfoValue)
 				{
 					int value = (int)propertyInfoValue.GetValue(dataEntity);
-					Dictionary<int, DataChangeMng> changeData = ChangeDataMap[valueInfo.StationNo];
-					if(changeData.ContainsKey(valueInfo.EquipNo))
+//					Dictionary<int, DataChangeMng> changeData = ChangeDataMap[valueInfo.StationNo];
+					SNoENoKey key = new SNoENoKey(valueInfo.StationNo, valueInfo.EquipNo);
+					if(ChangeDataMap.ContainsKey(key))
+//					if(changeData.ContainsKey(valueInfo.EquipNo))
 					{
-						changeMng = changeData[valueInfo.EquipNo];
+						changeMng = ChangeDataMap[key];
 						changeMng.CurValue = value;
 						result = changeMng.ValueChange;
-						changeData[valueInfo.EquipNo] = changeMng;
+						ChangeDataMap[key] = changeMng;
 					}
 					else
 					{
@@ -295,7 +301,7 @@ namespace YodogawaTest
 						changeMng.ValueChange = DataChange.Horizon;
 						changeMng.CurValue = value;
 						changeMng.ChangeValue = ((value / 100) > 0)? (value / 100) : 1;
-						changeData[valueInfo.EquipNo] = changeMng;
+						ChangeDataMap[key] = changeMng;
 					}
 				}
 			}
@@ -309,6 +315,8 @@ namespace YodogawaTest
 		{
 			List<int> recentList = new List<int>(){1,2,3,4,5};
 			List<int> recentRiverList = new List<int>(){8,9,10,11,12};
+			Dictionary<int, RecentDataEntity> recentUpdateList = new Dictionary<int, RecentDataEntity>();
+			Dictionary<int, RecentRiverDataEntity> recentRiverUpdateList = new Dictionary<int, RecentRiverDataEntity>();
 
 			List<RecentDataEntity> recents = null;
 			List<RecentRiverDataEntity> recentRivers = null;
@@ -318,86 +326,103 @@ namespace YodogawaTest
 			recents = DBInterface.FindRecentDataListBy(recentList);
 			recentRivers = DBInterface.FindRecentRiverDataListBy(recentRiverList);
 
-			foreach (KeyValuePair<int, Dictionary<int, DataChangeMng>> kvp0 in ChangeDataMap)
+			foreach (KeyValuePair<SNoENoKey, DataChangeMng> kvp in ChangeDataMap)
 			{
-				int station = kvp0.Key;
-				Dictionary<int, DataChangeMng> dataChangeMap = kvp0.Value;
-				if(dataChangeMap.Count > 0)
+				SNoENoKey key = kvp.Key;
+				int station = key.StationNo;
+				int equip = key.EquipNo;
+				DataChangeMng dataChange = kvp.Value;
+
+				if(station <= 7)
 				{
-					if(station <= 7)
+					if (!recentUpdateList.ContainsKey(station))
 					{
 						selRecent = recents.Where(x => x.StationNo == station).FirstOrDefault();
 					}
 					else
 					{
+						selRecent = recentUpdateList[station];
+					}
+				}
+				else
+				{
+					if (!recentRiverUpdateList.ContainsKey(station))
+					{
 						selRecentRiver = recentRivers.Where(x => x.StationNo == station).FirstOrDefault();
-					}
-					foreach (KeyValuePair<int, DataChangeMng> kvp1 in dataChangeMap)
-					{
-						int equip = kvp1.Key;
-						DataChangeMng dataChange = kvp1.Value;
-						CloumName cloum = GetCloumName(station, equip);
-						DataStatus valueStatus = DataStatus.Invalid;
-						if(station <= 7)
-						{
-							if(typeof(RecentDataEntity).GetProperty(cloum.StatusCloum) is PropertyInfo propertyInfoStatus)
-							{
-								int status = (int)propertyInfoStatus.GetValue(selRecent);
-								valueStatus = (DataStatus)status;
-							}
-						}
-						else
-						{
-							if(typeof(RecentRiverDataEntity).GetProperty(cloum.StatusCloum) is PropertyInfo propertyInfoStatus)
-							{
-								int status = (int)propertyInfoStatus.GetValue(selRecentRiver);
-								valueStatus = (DataStatus)status;
-							}
-						}
-						if(valueStatus == DataStatus.Normal)
-						{
-							int changeValue = 0;
-							if (dataChange.ValueChange == DataChange.Rise)
-							{
-								changeValue = dataChange.CurValue + dataChange.ChangeValue;
-								 dataChange.CurValue = changeValue;
-							}
-							else if(dataChange.ValueChange == DataChange.Fall)
-							{
-								if(dataChange.CurValue >= dataChange.ChangeValue)
-								{
-									changeValue = dataChange.CurValue - dataChange.ChangeValue;
-									dataChange.CurValue = changeValue;
-								}
-								else if(dataChange.CurValue >= 1)
-								{
-									dataChange.ChangeValue = 1;
-									changeValue = dataChange.CurValue - dataChange.ChangeValue;
-									dataChange.CurValue = changeValue;
-								}
-							}
-							if((dataChange.ValueChange == DataChange.Rise) || (dataChange.ValueChange == DataChange.Fall))
-							{
-								if(station <= 7)
-								{
-									SetPropertyValue<RecentDataEntity>(selRecent, cloum.ValueCloum, changeValue);
-								}
-								else
-								{
-									SetPropertyValue<RecentRiverDataEntity>(selRecentRiver, cloum.ValueCloum, changeValue);
-								}
-							}
-						}
-					}
-					if(station <= 7)
-					{
-						DBInterface.UpdateRecentDataListBy(station, selRecent);
 					}
 					else
 					{
-						DBInterface.UpdateRecentRiverDataListBy(station, selRecentRiver);
+						selRecentRiver = recentRiverUpdateList[station];
 					}
 				}
+				CloumName cloum = GetCloumName(station, equip);
+				DataStatus valueStatus = DataStatus.Invalid;
+				if(station <= 7)
+				{
+					if(typeof(RecentDataEntity).GetProperty(cloum.StatusCloum) is PropertyInfo propertyInfoStatus)
+					{
+						int status = (int)propertyInfoStatus.GetValue(selRecent);
+						valueStatus = (DataStatus)status;
+					}
+				}
+				else
+				{
+					if(typeof(RecentRiverDataEntity).GetProperty(cloum.StatusCloum) is PropertyInfo propertyInfoStatus)
+					{
+						int status = (int)propertyInfoStatus.GetValue(selRecentRiver);
+						valueStatus = (DataStatus)status;
+					}
+				}
+				if(valueStatus == DataStatus.Normal)
+				{
+					int changeValue = 0;
+					if (dataChange.ValueChange == DataChange.Rise)
+					{
+						changeValue = dataChange.CurValue + dataChange.ChangeValue;
+						 dataChange.CurValue = changeValue;
+					}
+					else if(dataChange.ValueChange == DataChange.Fall)
+					{
+						if(dataChange.CurValue >= dataChange.ChangeValue)
+						{
+							changeValue = dataChange.CurValue - dataChange.ChangeValue;
+							dataChange.CurValue = changeValue;
+						}
+						else if(dataChange.CurValue >= 1)
+						{
+							dataChange.ChangeValue = 1;
+							changeValue = dataChange.CurValue - dataChange.ChangeValue;
+							dataChange.CurValue = changeValue;
+						}
+					}
+					if((dataChange.ValueChange == DataChange.Rise) || (dataChange.ValueChange == DataChange.Fall))
+					{
+						if(station <= 7)
+						{
+							SetPropertyValue<RecentDataEntity>(selRecent, cloum.ValueCloum, changeValue);
+							recentUpdateList[station] = selRecent;
+						}
+						else
+						{
+							SetPropertyValue<RecentRiverDataEntity>(selRecentRiver, cloum.ValueCloum, changeValue);
+							recentRiverUpdateList[station] = selRecentRiver;
+
+						}
+					}
+				}
+			}
+			// DBデータ更新
+			foreach (KeyValuePair<int, RecentDataEntity> kvp in recentUpdateList)
+			{
+				int stationNo = kvp.Key;
+				RecentDataEntity dataEntity = kvp.Value;
+				DBInterface.UpdateRecentDataListBy(stationNo, dataEntity);
+			}
+			foreach (KeyValuePair<int, RecentRiverDataEntity> kvp in recentRiverUpdateList)
+			{
+				int stationNo = kvp.Key;
+				RecentRiverDataEntity dataEntity = kvp.Value;
+				DBInterface.UpdateRecentRiverDataListBy(stationNo, dataEntity);
 			}
 		}
 
@@ -459,10 +484,13 @@ namespace YodogawaTest
 				}
 
 				// データチェンジモード更新
-				Dictionary<int, DataChangeMng> changeMap = ChangeDataMap[valueInfo.StationNo];
-				if (changeMap.ContainsKey(valueInfo.EquipNo))
+//				Dictionary<int, DataChangeMng> changeMap = ChangeDataMap[valueInfo.StationNo];
+//				if (changeMap.ContainsKey(valueInfo.EquipNo))
+				SNoENoKey key = new SNoENoKey(valueInfo.StationNo, valueInfo.EquipNo);
+				if(ChangeDataMap.ContainsKey(key))
 				{
-					DataChangeMng changeMng = changeMap[valueInfo.EquipNo];
+//					DataChangeMng changeMng = changeMap[valueInfo.EquipNo];
+					DataChangeMng changeMng = ChangeDataMap[key];
 					changeMng.ValueChange = update.ValueChange;
 				}
 			}
