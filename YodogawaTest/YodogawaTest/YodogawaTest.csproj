@@ -97,6 +97,7 @@
     <Compile Include="DB\DatabaseManager.cs" />
     <Compile Include="DB\DBConnection.cs" />
     <Compile Include="DB\DBInterface.cs" />
+    <Compile Include="DB\DBEachInterface.cs" />
     <Compile Include="DB\KeisokuDataInfoEntity.cs" />
     <Compile Include="DB\RecentDataEntity.cs" />
     <Compile Include="DB\RecentRiverDataEntity.cs" />

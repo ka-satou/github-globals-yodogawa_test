@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -36,7 +38,7 @@ namespace YodogawaTest.DB
 			DBConnectionIfnoTable = new Dictionary<TargetDB, DBConnectionInfo>();
 			foreach (TargetDB targetDB in Enum.GetValues(typeof(TargetDB)))
 			{
-				string server = ConfigurationManager.AppSettings[$"{targetDB}.Server"];
+				string server = GetIpAddr(ConfigurationManager.AppSettings[$"{targetDB}.Server"]);
 				// サーバー名がない場合にはスキップ
 				if (string.IsNullOrEmpty(server))
 				{
@@ -129,5 +131,26 @@ namespace YodogawaTest.DB
 		public static int DateTime2IntTime(DateTime dateTime) => int.Parse(DateTime2DateTimeString(dateTime).Substring(8, 6));
 		public static string Int2DateString(int value) => value.ToString(DATE_CONVERT_FORMAT);
 		public static string Int2TimeString(int value) => value.ToString(TIME_CONVERT_FORMAT);
+
+
+		/// <summary>
+		/// PC名⇒IPアドレス変換
+		/// </summary>
+		/// <param name="hostname"></param>
+		/// <returns></returns>
+		private string GetIpAddr(string hostname)
+		{
+			string result = "";
+			IPHostEntry ip = Dns.GetHostEntry(hostname);
+			foreach (IPAddress address in ip.AddressList)
+			{
+				if (address.AddressFamily == AddressFamily.InterNetwork)
+				{
+					result = address.ToString();
+					break;
+				}
+			}
+			return result;
+		}
 	}
 }
