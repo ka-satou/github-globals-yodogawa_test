@@ -23,7 +23,19 @@ namespace YodogawaTest.DB
 		/// <returns></returns>
 		public static DBConnection GetConnection(TargetDB? targetDB = null) => DatabaseManager.Instance.GetDBConnection(targetDB);
 
+		/// <summary>
+		/// ターゲットDB結果情報
+		/// </summary>
+		private static Dictionary<TargetDB, TaskCompletionSource<int>> targetDBResultMap{ get; set; } = new Dictionary<TargetDB, TaskCompletionSource<int>>();
 
+		/// <summary>
+		/// ターゲットDB通知情報
+		/// </summary>
+		private static Dictionary<TargetDB, TaskCompletionSource<int>> targetDBNotifyMap{ get; set; } = new Dictionary<TargetDB, TaskCompletionSource<int>>();
+
+		/// <summary>
+		/// ターゲットDBインターフェースクラスリスト
+		/// </summary>
 		private static List<DBEachInterface> _dbIfList;
 		private static List<DBEachInterface> dbIfList 
 		{ 
@@ -34,9 +46,13 @@ namespace YodogawaTest.DB
 					_dbIfList = GetdbIfList();
 				}
 				return _dbIfList;
-			}	
+			}
 		}
 
+		/// <summary>
+		/// ターゲットDBインターフェースクラス取得
+		/// </summary>
+		/// <returns></returns>
 		private static List<DBEachInterface> GetdbIfList()
 		{
 			List<DBEachInterface> dbIfList = new List<DBEachInterface>();
@@ -89,37 +105,55 @@ namespace YodogawaTest.DB
 //		public Task<int> UpdateAll<T>(int station, T updateData) where T : class, IStationNoEntity
 		public async Task<int> UpdateAll<T>(int station, T updateData) where T : class, IStationNoEntity
 		{
+			Debug.WriteLine("Main:StartUpdateData");
 			try
 			{
 				foreach(DBEachInterface dbIf in dbIfList)
 				{
-					await dbIf.UpdateData<T>(station, updateData);
+					TaskCompletionSource<int> targetDBResult = new TaskCompletionSource<int>();
+					targetDBResultMap[dbIf.targetDB] = targetDBResult;
+					TaskCompletionSource<int> targetDBNotify = new TaskCompletionSource<int>();
+					targetDBNotifyMap[dbIf.targetDB] = targetDBNotify;
+#pragma warning disable 4014
+					Task.Run(() =>dbIf.UpdateData<T>(station, updateData, targetDBResult, targetDBNotify));
+#pragma warning restore 4014
 				}
-			}
-			catch (Exception ex)
-			{
-				Debug.WriteLine(ex);
-			}
-/*
-			try
-			{
-				foreach (TargetDB targetDB in Enum.GetValues(typeof(TargetDB)))
+
+				Debug.WriteLine("Main:AllTaskWaitIn");
+				int[] dbResults = await Task.WhenAll(
+												targetDBResultMap[TargetDB.Target1].Task, 
+												targetDBResultMap[TargetDB.Target2].Task,
+												targetDBResultMap[TargetDB.Target3].Task,
+												targetDBResultMap[TargetDB.Target4].Task, 
+												targetDBResultMap[TargetDB.Target5].Task,
+												targetDBResultMap[TargetDB.Target6].Task
+											);
+				Debug.WriteLine("Main:AllTaskWaitOut");
+				int notyfy = 0;
+				foreach(int dbResult in dbResults)
 				{
-					using (DBConnection connection = GetConnection(targetDB))
+					if(dbResult == 0)
 					{
-						var entities = DatabaseManager.Instance.GetEntities<T>(connection)
-						.Where(v => v.StationNo == station)
-						.FirstOrDefault();
-						CopyProperyt<T>(entities, updateData);
-						connection.SaveChanges();
+						continue;
+					}
+					else
+					{
+						notyfy = 1;
+						break;
 					}
 				}
+				foreach(TargetDB targetDB in Enum.GetValues(typeof(TargetDB)))
+				{
+					Debug.WriteLine(DBEachInterface.strTargetDBMap[targetDB] + "NotifyIn");
+					targetDBNotifyMap[targetDB].SetResult(notyfy);
+					Debug.WriteLine(DBEachInterface.strTargetDBMap[targetDB] + "NotifyOut");
+				}
 			}
 			catch (Exception ex)
 			{
 				Debug.WriteLine(ex);
 			}
-*/
+			Debug.WriteLine("Main:EndUpdateData");
 			return 0;
 		}
 

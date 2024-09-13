@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static YodogawaTest.DB.DBInterface;
 
 namespace YodogawaTest.DB
 {
@@ -12,7 +13,7 @@ namespace YodogawaTest.DB
 		/// <summary>
 		/// ターゲットDB
 		/// </summary>
-		private TargetDB targetDB { get; set; }
+		public TargetDB targetDB { get; set; }
 
 		/// <summary>
 		/// デバック表示用
@@ -22,7 +23,7 @@ namespace YodogawaTest.DB
 		/// <summary>
 		/// デバック表示用マップ
 		/// </summary>
-		private static Dictionary<TargetDB, string> strTargetDBMap = new Dictionary<TargetDB, string>
+		public static Dictionary<TargetDB, string> strTargetDBMap = new Dictionary<TargetDB, string>
 		{
 			{ TargetDB.Target1, "TARGET1DB:" },
 			{ TargetDB.Target2, "TARGET2DB:" },
@@ -42,30 +43,49 @@ namespace YodogawaTest.DB
 			strTargetDB = strTargetDBMap[targetDB];
 		}
 
-		public Task<int> UpdateData<T>(int station, T updateData) where T : class, IStationNoEntity
+		public async Task UpdateData<T>(
+							int station,
+							T updateData,
+							TaskCompletionSource<int> targetDBResult,
+							TaskCompletionSource<int> targetDBNotify
+			) where T : class, IStationNoEntity
 		{
-			int result = 0;
-			using (DBConnection connection = DBInterface.GetConnection(targetDB))
+			Debug.WriteLine(strTargetDB + "StartUpdateData");
+			using (DBConnection connection = GetConnection(targetDB))
 			using (var tran = connection.Database.BeginTransaction())
 			{
 				try
 				{
-					connection.Database.Log = sql => { Debug.Write(strTargetDB + sql); };
+//					connection.Database.Log = sql => { Debug.Write(strTargetDB + sql); };
 					var entities = DatabaseManager.Instance.GetEntities<T>(connection)
 					.Where(v => v.StationNo == station)
 					.FirstOrDefault();
-					DBInterface.CopyProperyt<T>(entities, updateData);
+					CopyProperyt<T>(entities, updateData);
 					connection.SaveChanges();
-					
-					tran.Commit();
+					Debug.WriteLine(strTargetDB + "Process0");
+					targetDBResult.SetResult(0);
+					Debug.WriteLine(strTargetDB + "Process1");
+					int data = await targetDBNotify.Task;
+					Debug.WriteLine(strTargetDB + "Process2");
+					if(data == 0)
+					{
+						Debug.WriteLine(strTargetDB + "Commit");
+						tran.Commit();
+					}
+					else
+					{
+						Debug.WriteLine(strTargetDB + "Rollback");
+						tran.Rollback();
+					}
 				}
 				catch
 				{
+					targetDBResult.SetResult(1);
+					int data = await targetDBNotify.Task;
 					tran.Rollback();
-					
 				}
 			}
-			return Task.FromResult(result);
+			Debug.WriteLine(strTargetDB + "EndUpdateData");
 		}
 	}
 }
