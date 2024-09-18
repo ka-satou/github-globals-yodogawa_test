@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace YodogawaTest.DB
@@ -23,6 +24,9 @@ namespace YodogawaTest.DB
 		/// <returns></returns>
 		public static DBConnection GetConnection(TargetDB? targetDB = null) => DatabaseManager.Instance.GetDBConnection(targetDB);
 
+		private static Dictionary<TargetDB, Task<int>> targetDBIfTaskMap{ get; set; } = new Dictionary<TargetDB, Task<int>>();
+
+
 		/// <summary>
 		/// ターゲットDB結果情報
 		/// </summary>
@@ -32,6 +36,9 @@ namespace YodogawaTest.DB
 		/// ターゲットDB通知情報
 		/// </summary>
 		private static Dictionary<TargetDB, TaskCompletionSource<int>> targetDBNotifyMap{ get; set; } = new Dictionary<TargetDB, TaskCompletionSource<int>>();
+
+
+		private static Dictionary<TargetDB, DBEachInterface> dbInterfaceMap { get; set; } = new Dictionary<TargetDB, DBEachInterface>();
 
 		/// <summary>
 		/// ターゲットDBインターフェースクラスリスト
@@ -49,6 +56,13 @@ namespace YodogawaTest.DB
 			}
 		}
 
+		private Task<int> MainUpdateTask { get; set; }
+
+		private Type updateEntity { get; set; }
+
+		private object DBUpdateLock { get; set; } = new object();
+
+
 		/// <summary>
 		/// ターゲットDBインターフェースクラス取得
 		/// </summary>
@@ -60,6 +74,7 @@ namespace YodogawaTest.DB
 			{
 				DBEachInterface dBEach = new DBEachInterface(targetDB);
 				dbIfList.Add(dBEach);
+				dbInterfaceMap.Add(targetDB, dBEach);
 			}
 			return dbIfList;
 		}
@@ -86,6 +101,15 @@ namespace YodogawaTest.DB
 		/// <returns></returns>
 		public List<T> SelectAll<T>(List<int> stations) where T : class, IStationNoEntity
 		{
+/*
+			TargetDB selfTargetDB = DatabaseManager.Instance.GetSelfDB();
+			if(dbInterfaceMap.Count > 0)
+			{
+				DBEachInterface dBEach = dbInterfaceMap[selfTargetDB];
+				int data = await dBEach.WaitTargetDBUpdate<T>();
+			}
+*/
+			int data = WaitTargetDBUpdate<T>();
 			using (DBConnection connection = GetConnection())
 			{
 				List<T> list = DatabaseManager.Instance.GetEntities<T>(connection)
@@ -103,9 +127,31 @@ namespace YodogawaTest.DB
 		/// <param name="station"></param>
 		/// <param name="updateData"></param>
 //		public Task<int> UpdateAll<T>(int station, T updateData) where T : class, IStationNoEntity
-		public async Task<int> UpdateAll<T>(int station, T updateData) where T : class, IStationNoEntity
+		public void UpdateAll<T>(int station, T updateData) where T : class, IStationNoEntity
 		{
 			Debug.WriteLine("Main:StartUpdateData");
+//			foreach(DBEachInterface dbIf in dbIfList)
+//			{
+//				dbIf.SetDBUpdateInfo<T>();
+//			}
+			Monitor.Enter(DBUpdateLock);	// 排他開始
+			updateEntity = typeof(T);
+			MainUpdateTask = Task.Run(() => UpdateAllTask<T>(station, updateData));
+			Monitor.Exit(DBUpdateLock);		// 排他終了
+			Debug.WriteLine("Main:EndUpdateData");
+		}
+
+		/// <summary>
+		/// 施設番号条件で更新タスク
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="station"></param>
+		/// <param name="updateData"></param>
+		/// <returns></returns>
+		public async Task<int> UpdateAllTask<T>(int station, T updateData) where T : class, IStationNoEntity
+		{
+			Debug.WriteLine("Main:StartUpdateDataTask");
+			Task<int>[] tasks = new Task<int>[6]; 
 			try
 			{
 				foreach(DBEachInterface dbIf in dbIfList)
@@ -114,9 +160,9 @@ namespace YodogawaTest.DB
 					targetDBResultMap[dbIf.targetDB] = targetDBResult;
 					TaskCompletionSource<int> targetDBNotify = new TaskCompletionSource<int>();
 					targetDBNotifyMap[dbIf.targetDB] = targetDBNotify;
-#pragma warning disable 4014
-					Task.Run(() =>dbIf.UpdateData<T>(station, updateData, targetDBResult, targetDBNotify));
-#pragma warning restore 4014
+//#pragma warning disable 4014
+					targetDBIfTaskMap[dbIf.targetDB] = Task.Run(() => dbIf.UpdateData<T>(station, updateData, targetDBResult, targetDBNotify));
+//#pragma warning restore 4014
 				}
 
 				Debug.WriteLine("Main:AllTaskWaitIn");
@@ -153,7 +199,37 @@ namespace YodogawaTest.DB
 			{
 				Debug.WriteLine(ex);
 			}
-			Debug.WriteLine("Main:EndUpdateData");
+
+			Debug.WriteLine("Main:AllTaskExitWaitIn");
+			int[] exitResults = await Task.WhenAll(
+											targetDBIfTaskMap[TargetDB.Target1], 
+											targetDBIfTaskMap[TargetDB.Target2],
+											targetDBIfTaskMap[TargetDB.Target3],
+											targetDBIfTaskMap[TargetDB.Target4], 
+											targetDBIfTaskMap[TargetDB.Target5],
+											targetDBIfTaskMap[TargetDB.Target6]
+										);
+			Debug.WriteLine("Main:AllTaskExitWaitOut");
+
+			Debug.WriteLine("Main:EndUpdateDataTask");
+			return 0;
+		}
+
+		public int WaitTargetDBUpdate<T>()
+		{
+			Monitor.Enter(DBUpdateLock);	// 排他開始
+			if(MainUpdateTask != null)
+			{
+				if(typeof(T) == updateEntity)
+				{
+					Monitor.Exit(DBUpdateLock);		// 排他終了
+					Debug.WriteLine("ReadTask:WaitReadStart");
+					int result = MainUpdateTask.Result;
+					Debug.WriteLine("ReadTask:WaitReadEnd");
+					return 0;
+				}
+			}
+			Monitor.Exit(DBUpdateLock);				// 排他終了
 			return 0;
 		}
 
@@ -208,13 +284,13 @@ namespace YodogawaTest.DB
 		/// <param name="station"></param>
 		/// <param name="entity"></param>
 //		public static void UpdateRecentDataListBy(int station, RecentDataEntity entity) => Instance.UpdateAll<RecentDataEntity>(station, entity);
-		public static async void UpdateRecentDataListBy(int station, RecentDataEntity entity) => await Instance.UpdateAll<RecentDataEntity>(station, entity);
+		public static void UpdateRecentDataListBy(int station, RecentDataEntity entity) => Instance.UpdateAll<RecentDataEntity>(station, entity);
 
 		/// <summary>
 		/// 河川情報瞬時値データの更新
 		/// </summary>
 		/// <param name="station"></param>
 		/// <param name="entity"></param>
-		public static async void UpdateRecentRiverDataListBy(int station, RecentRiverDataEntity entity) => await Instance.UpdateAll<RecentRiverDataEntity>(station, entity);
+		public static void UpdateRecentRiverDataListBy(int station, RecentRiverDataEntity entity) => Instance.UpdateAll<RecentRiverDataEntity>(station, entity);
 	}
 }

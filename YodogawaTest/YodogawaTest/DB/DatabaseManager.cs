@@ -152,5 +152,11 @@ namespace YodogawaTest.DB
 			}
 			return result;
 		}
+
+		/// <summary>
+		/// リード対象DB取得
+		/// </summary>
+		/// <returns></returns>
+		public TargetDB GetSelfDB() => SelfDB;
 	}
 }

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Management.Instrumentation;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static YodogawaTest.DB.DBInterface;
 
@@ -19,6 +21,37 @@ namespace YodogawaTest.DB
 		/// デバック表示用
 		/// </summary>
 		private string strTargetDB { get; set; }
+
+
+
+		public class DBUpdateInfo
+		{
+			public Type							updateEntity { get; set; }
+			public TaskCompletionSource<int>	Wait { get; set; }
+
+		}
+
+		/// <summary>
+		/// ターゲットDB更新中
+		/// </summary>
+//		private static Dictionary<TargetDB, DBUpdateInfo> DBUpdateMap = new Dictionary<TargetDB, DBUpdateInfo>();
+		public DBUpdateInfo dbUpdate { get; set; }
+
+		/// <summary>
+		/// ターゲットDB更新中排他オブジェクト
+		/// </summary>
+/*
+		private static Dictionary<TargetDB, object> DBUpdateMapLockMap = new Dictionary<TargetDB, object>
+		{
+			{ TargetDB.Target1, new object() },
+			{ TargetDB.Target2, new object() },
+			{ TargetDB.Target3, new object() },
+			{ TargetDB.Target4, new object() },
+			{ TargetDB.Target5, new object() },
+			{ TargetDB.Target6, new object() },
+		};
+*/
+		private object DBUpdateLock { get; set; } = new object();
 
 		/// <summary>
 		/// デバック表示用マップ
@@ -43,7 +76,7 @@ namespace YodogawaTest.DB
 			strTargetDB = strTargetDBMap[targetDB];
 		}
 
-		public async Task UpdateData<T>(
+		public async Task<int> UpdateData<T>(
 							int station,
 							T updateData,
 							TaskCompletionSource<int> targetDBResult,
@@ -51,6 +84,7 @@ namespace YodogawaTest.DB
 			) where T : class, IStationNoEntity
 		{
 			Debug.WriteLine(strTargetDB + "StartUpdateData");
+
 			using (DBConnection connection = GetConnection(targetDB))
 			using (var tran = connection.Database.BeginTransaction())
 			{
@@ -85,7 +119,51 @@ namespace YodogawaTest.DB
 					tran.Rollback();
 				}
 			}
+/*
+			Monitor.Enter(DBUpdateLock);	// 排他開始
+			if(dbUpdate != null)
+			{
+				dbUpdate.Wait.SetResult(0);
+//				dbUpdate = null;
+			}
+			Monitor.Exit(DBUpdateLock);		// 排他停止
+*/
 			Debug.WriteLine(strTargetDB + "EndUpdateData");
+			return 0;
+		}
+
+/*
+		public async Task<int> WaitTargetDBUpdate<T>()
+		{
+			TargetDB selfTargetDB = DatabaseManager.Instance.GetSelfDB();
+			Monitor.Enter(DBUpdateLock);	// 排他開始
+			if(dbUpdate != null)
+			{
+//				DBUpdateInfo updateInfo = dbUpdate;
+				if(typeof(T) == dbUpdate.updateEntity)
+				{
+					Monitor.Exit(DBUpdateLock);		// 排他終了
+					Debug.WriteLine(strTargetDBMap[selfTargetDB] + "WaitReadStart");
+					int a = await dbUpdate.Wait.Task;
+//					dbUpdate = null;
+					Debug.WriteLine(strTargetDBMap[selfTargetDB] + "WaitReadEnd");
+					return 0;
+				}
+			}
+			Monitor.Exit(DBUpdateLock);				// 排他終了
+			return 0;
+		}
+*/
+
+		/// <summary>
+		/// DB更新情報取得
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		public void SetDBUpdateInfo<T>()
+		{
+			Monitor.Enter(DBUpdateLock);	// 排他開始
+			dbUpdate = new DBUpdateInfo { updateEntity = typeof(T), Wait = new TaskCompletionSource<int>() };
+			Monitor.Exit(DBUpdateLock);		// 排他停止
 		}
 	}
 }
