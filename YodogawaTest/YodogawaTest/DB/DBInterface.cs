@@ -211,9 +211,30 @@ namespace YodogawaTest.DB
 				}
 			}
 
+#pragma warning disable 4014
+			Task.Run(() => ExitUpdate());
+#pragma warning restore 4014
 			Debug.WriteLine("Main:EndUpdateDataTask");
 			return result;
 		}
+
+		/// <summary>
+		/// 更新後処理
+		/// </summary>
+		void ExitUpdate()
+		{
+			Debug.WriteLine("Main:StartExitUpdate");
+			Monitor.Enter(DBUpdateLock);	// 排他開始
+			while(!MainUpdateTask.IsCompleted)
+			{
+				Thread.Sleep(100);
+			}
+			MainUpdateTask = null;
+			updateEntity = null;
+			Monitor.Exit(DBUpdateLock);		// 排他終了
+			Debug.WriteLine("Main:EndExitUpdate");
+		}
+
 
 		/// <summary>
 		/// 更新処理完了待ち
