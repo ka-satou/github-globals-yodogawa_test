@@ -101,14 +101,6 @@ namespace YodogawaTest.DB
 		/// <returns></returns>
 		public List<T> SelectAll<T>(List<int> stations) where T : class, IStationNoEntity
 		{
-/*
-			TargetDB selfTargetDB = DatabaseManager.Instance.GetSelfDB();
-			if(dbInterfaceMap.Count > 0)
-			{
-				DBEachInterface dBEach = dbInterfaceMap[selfTargetDB];
-				int data = await dBEach.WaitTargetDBUpdate<T>();
-			}
-*/
 			int data = WaitTargetDBUpdate<T>();
 			using (DBConnection connection = GetConnection())
 			{
@@ -130,10 +122,6 @@ namespace YodogawaTest.DB
 		public void UpdateAll<T>(int station, T updateData) where T : class, IStationNoEntity
 		{
 			Debug.WriteLine("Main:StartUpdateData");
-//			foreach(DBEachInterface dbIf in dbIfList)
-//			{
-//				dbIf.SetDBUpdateInfo<T>();
-//			}
 			Monitor.Enter(DBUpdateLock);	// 排他開始
 			updateEntity = typeof(T);
 			MainUpdateTask = Task.Run(() => UpdateAllTask<T>(station, updateData));
@@ -160,9 +148,7 @@ namespace YodogawaTest.DB
 					targetDBResultMap[dbIf.targetDB] = targetDBResult;
 					TaskCompletionSource<int> targetDBNotify = new TaskCompletionSource<int>();
 					targetDBNotifyMap[dbIf.targetDB] = targetDBNotify;
-//#pragma warning disable 4014
 					targetDBIfTaskMap[dbIf.targetDB] = Task.Run(() => dbIf.UpdateData<T>(station, updateData, targetDBResult, targetDBNotify));
-//#pragma warning restore 4014
 				}
 
 				Debug.WriteLine("Main:AllTaskWaitIn");
@@ -211,10 +197,29 @@ namespace YodogawaTest.DB
 										);
 			Debug.WriteLine("Main:AllTaskExitWaitOut");
 
+			int result = 0;
+			foreach(int exitResult in exitResults)
+			{
+				if(exitResult == 0)
+				{
+					continue;
+				}
+				else
+				{
+					result = 1;
+					break;
+				}
+			}
+
 			Debug.WriteLine("Main:EndUpdateDataTask");
-			return 0;
+			return result;
 		}
 
+		/// <summary>
+		/// 更新処理完了待ち
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
 		public int WaitTargetDBUpdate<T>()
 		{
 			Monitor.Enter(DBUpdateLock);	// 排他開始
@@ -283,7 +288,6 @@ namespace YodogawaTest.DB
 		/// </summary>
 		/// <param name="station"></param>
 		/// <param name="entity"></param>
-//		public static void UpdateRecentDataListBy(int station, RecentDataEntity entity) => Instance.UpdateAll<RecentDataEntity>(station, entity);
 		public static void UpdateRecentDataListBy(int station, RecentDataEntity entity) => Instance.UpdateAll<RecentDataEntity>(station, entity);
 
 		/// <summary>
